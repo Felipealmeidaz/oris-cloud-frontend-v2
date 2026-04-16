@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 import Header from "./components/Header";
@@ -18,7 +19,8 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
-        <TooltipProvider>
+        <AuthProvider>
+          <TooltipProvider>
           <div className="min-h-screen w-full bg-background text-foreground">
             <Header />
             <main>
@@ -33,8 +35,8 @@ function App() {
             <Footer />
           </div>
           <Toaster />
-          <CookieConsent />
-        </TooltipProvider>
+          </TooltipProvider>
+        </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );
