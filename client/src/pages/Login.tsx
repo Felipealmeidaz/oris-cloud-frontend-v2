@@ -93,8 +93,11 @@ export function Login() {
           className="flex items-center justify-center gap-3 mb-12"
         >
           <img
-            src="https://d2xsxph8kpxj0f.cloudfront.net/310419663032706170/WMz8HoFpHBf5sKDLPKcovU/m51284p_3f1a6df2.png"
+            src="/logo-sm.png"
+            srcSet="/logo-sm.png 1x, /logo-md.png 2x, /logo-lg.png 3x"
             alt="Oris Cloud"
+            width={40}
+            height={40}
             className="h-10 w-10"
           />
           <span className="text-2xl font-bold text-white tracking-wider">ORIS</span>

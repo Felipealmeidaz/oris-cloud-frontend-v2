@@ -32,8 +32,11 @@ export default function Header() {
           className="flex items-center gap-2"
         >
           <img
-            src="https://d2xsxph8kpxj0f.cloudfront.net/310419663032706170/WMz8HoFpHBf5sKDLPKcovU/m51284p_3f1a6df2.png"
+            src="/logo-sm.png"
+            srcSet="/logo-sm.png 1x, /logo-md.png 2x, /logo-lg.png 3x"
             alt="Oris Cloud"
+            width={32}
+            height={32}
             className="h-8 w-8"
           />
           <span className="text-xl font-bold tracking-wider text-white">ORIS</span>
