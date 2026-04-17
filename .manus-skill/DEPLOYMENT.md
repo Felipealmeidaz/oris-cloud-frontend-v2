@@ -2,25 +2,49 @@
 
 ## ⚠️ REALIDADE CRÍTICA QUE O MANUS DEVE ENTENDER
 
-**O Manus NÃO tem acesso direto ao terminal do Felipe, ao GitHub, ao Vercel ou ao Railway.** Tudo que acontece no mundo real (commit, push, deploy) precisa passar pelo Felipe como intermediário.
+O Manus TEM MCP GitHub ativo e **consegue fazer commits + push diretamente no repositório** `Felipealmeidaz/oris-cloud-frontend-v2`. Mas **NÃO tem controle sobre o Vercel** — o Vercel deveria auto-deployar a cada push na `main`, mas às vezes o webhook falha silenciosamente (especialmente quando o commit vem via API em vez de git CLI).
 
 ### O Que O Manus PODE Fazer
 
-- Gerar código correto com base nas outras seções desta skill
-- Entregar código ao Felipe via chat, em blocos formatados
-- Descrever exatamente qual arquivo modificar e qual mudança aplicar
-- Se tiver MCP GitHub configurado: criar Pull Requests via API
-- Explicar comandos que o Felipe deve rodar localmente
+- ✅ Gerar código correto com base nas outras seções desta skill
+- ✅ Fazer commits + push via MCP GitHub no repo `oris-cloud-frontend-v2`
+- ✅ Ler arquivos remotos do repositório via GitHub API
+- ✅ Criar Pull Requests para revisão
+- ✅ Verificar `x-vercel-id` e outros headers do site para detectar se deploy ocorreu
 
 ### O Que O Manus NÃO PODE Fazer
 
-- ❌ Acessar `c:\Users\felip\Downloads\Projetos\...` (é o disco local do Felipe)
-- ❌ Rodar `git push` em nome do Felipe
-- ❌ Rodar `vercel --prod --yes` em nome do Felipe
-- ❌ Fazer login no dashboard da Vercel, Railway, GitHub
-- ❌ Disparar deploys manualmente
-- ❌ "Verificar se o deploy foi" acessando URLs (limitado; depende do tool)
-- ❌ **PRETENDER** que fez commit/push quando não fez
+- ❌ Acessar `c:\Users\felip\Downloads\Projetos\...` (é o disco local do Felipe, diferente do repo)
+- ❌ Rodar `vercel --prod --yes` (CLI não está no ambiente do Manus)
+- ❌ Acessar o dashboard web do Vercel, Railway, GitHub
+- ❌ Ver logs de build do Vercel (só o Felipe tem acesso)
+- ❌ Forçar re-deploy no Vercel quando o webhook falha
+- ❌ **PRETENDER** que o deploy completou só porque o commit foi feito
+
+### Fluxo Real de Deploy (quando funciona)
+
+```
+1. Manus gera código localmente
+2. Manus faz commit + push via MCP GitHub → branch main
+3. GitHub webhook dispara para Vercel
+4. Vercel builda e deploya em 30-90s
+5. oriscloud.com.br recebe a nova versão
+6. Felipe confirma visualmente (com hard refresh)
+```
+
+### Fluxo Quando o Webhook Falha (acontece)
+
+```
+1-2. Manus gera + commita + pusha (OK)
+3. Webhook NÃO dispara (bug conhecido: commits via API às vezes não triggeram)
+4. Vercel fica na versão antiga
+5. Felipe reporta: "não mudou!"
+6. Manus DEVE:
+   - Pedir ao Felipe confirmar que o commit está no GitHub (link direto)
+   - Se commit existe, orientar Felipe a rodar deploy manual:
+       vercel --prod --yes
+   - OU abrir o Vercel Dashboard → ultimo deploy → Redeploy
+```
 
 ## 🔁 Arquitetura de Deploy
 
