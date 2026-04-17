@@ -3,6 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { config } from 'dotenv';
+import { toNodeHandler, fromNodeHeaders } from 'better-auth/node';
+import { auth } from './lib/auth';
 
 config();
 
@@ -39,6 +41,9 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Better Auth routes
+app.all('/api/auth/*', toNodeHandler(auth));
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is running', timestamp: new Date().toISOString() });
@@ -48,17 +53,25 @@ app.get('/api/v1/auth/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is running' });
 });
 
+// Get current user
+app.get('/api/v1/users/me', async (req, res) => {
+  try {
+    const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
+    
+    if (!session) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+    
+    res.json(session.user);
+  } catch (error) {
+    console.error('Error getting session:', error);
+    res.status(401).json({ error: 'Not authenticated' });
+  }
+});
+
 // API Routes
 app.get('/api/v1/users', (req, res) => {
   res.json({ message: 'Users endpoint' });
-});
-
-app.post('/api/v1/auth/login', (req, res) => {
-  res.json({ message: 'Login endpoint' });
-});
-
-app.post('/api/v1/auth/register', (req, res) => {
-  res.json({ message: 'Register endpoint' });
 });
 
 // 404 handler
@@ -81,4 +94,5 @@ app.listen(PORT, () => {
   console.log(`🔒 Security: Helmet enabled`);
   console.log(`🔗 Frontend: ${FRONTEND_URL}`);
   console.log(`📍 Health check: GET /api/health`);
+  console.log(`🔐 Auth: GET /api/auth/session`);
 });

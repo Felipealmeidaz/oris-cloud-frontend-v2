@@ -1,20 +1,31 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { User } from '@/lib/api';
-import { useAuth } from '@/hooks/useAuth';
+import { useSession, signOut } from '@/lib/auth-client';
 
 interface AuthContextType {
-  user: User | null;
+  user: any | null;
   isLoading: boolean;
   isLoggedIn: boolean;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const auth = useAuth();
+  const { data: session, isPending: isLoading } = useSession();
 
-  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+  const handleLogout = async () => {
+    await signOut();
+    window.location.href = '/';
+  };
+
+  const value: AuthContextType = {
+    user: session?.user || null,
+    isLoading,
+    isLoggedIn: !!session?.user,
+    logout: handleLogout,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuthContext = () => {

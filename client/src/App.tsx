@@ -3,6 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { Router, Route } from "wouter";
 
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -14,6 +15,25 @@ import Features from "./components/Features";
 import FAQ from "./components/FAQ";
 import Footer from "./components/Footer";
 import CookieConsent from "./components/CookieConsent";
+import { Login } from "./pages/Login";
+
+function HomePage() {
+  return (
+    <>
+      <Header />
+      <main>
+        <Hero />
+        <About />
+        <Founders />
+        <Plans />
+        <HowItWorks />
+        <Features />
+        <FAQ />
+      </main>
+      <Footer />
+    </>
+  );
+}
 
 function App() {
   return (
@@ -21,20 +41,13 @@ function App() {
       <ThemeProvider defaultTheme="dark">
         <AuthProvider>
           <TooltipProvider>
-          <div className="min-h-screen w-full bg-background text-foreground">
-            <Header />
-            <main>
-              <Hero />
-              <About />
-              <Founders />
-              <Plans />
-              <HowItWorks />
-              <Features />
-              <FAQ />
-            </main>
-            <Footer />
-          </div>
-          <Toaster />
+            <Router>
+              <div className="min-h-screen w-full bg-background text-foreground">
+                <Route path="/" component={HomePage} />
+                <Route path="/login" component={Login} />
+              </div>
+              <Toaster />
+            </Router>
           </TooltipProvider>
         </AuthProvider>
       </ThemeProvider>
