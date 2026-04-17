@@ -56,7 +56,17 @@ Após atualizar, re-subir a skill no Manus (ou se estiver via GitHub, ele puxa a
 
 ## Versão
 
-**v1.0.0** — Criada em outubro de 2025 após debugging extenso da integração Better Auth + OAuth.
+**v1.1.0** — Abril 2026. Atualização após debugging de bugs de cookies cross-site no OAuth.
+
+### Changelog
+
+- **v1.1.0 (2026-04-17)**
+  - Novo endpoint backend `GET /api/auth/oauth-start` pra top-level navigation do OAuth
+  - `LoginButton.tsx` simplificado: sem POST AJAX, só `window.location.href` direto
+  - Regra de ordem de middlewares: rotas específicas `/api/auth/*` ANTES do catch-all Better Auth
+  - Documentada limitação de cookies cross-domain em browsers privacy-first (Comet, Brave, Chrome anônimo)
+  - Plano pendente: migrar backend pra subdomínio `api.oriscloud.com.br`
+- **v1.0.0 (2025-10)** — Criada após debugging extenso da integração Better Auth + OAuth.
 
 ## Lint Warnings
 

@@ -1,7 +1,7 @@
 ---
 name: oris-cloud-dev
 description: Skill para desenvolvimento do projeto Oris Cloud (plataforma brasileira de cloud gaming). Ative sempre que o usuário mencionar Oris Cloud, oriscloud.com.br, cloud gaming, ou solicitar modificações em qualquer arquivo dos repositórios oris-cloud-frontend-v2 / oris-cloud-railway. Contém regras críticas, stack técnico, estrutura e design system que DEVEM ser seguidos sem exceção.
-version: 1.0.0
+version: 1.1.0
 author: Felipe (Z2ky)
 triggers:
   - oris cloud
@@ -80,7 +80,10 @@ Quando o usuário pedir uma modificação:
 Respeitar esta lista — são erros reais cometidos em sessões anteriores que quebraram produção:
 
 - **404 em OAuth GitHub**: causado por mudança no `LoginButton.tsx` que reintroduziu o fetch via SDK em vez do redirect manual. **FIX**: deixar `LoginButton.tsx` intocado.
-- **CORS blocking em Railway**: causado por reordenação de middleware. **FIX**: `toNodeHandler(auth)` DEVE vir ANTES de `express.json()`.
+- **OAuth `state_mismatch` error após autorizar no provider** (bug descoberto 2026-04-17): causado por `LoginButton.tsx` fazer POST AJAX separado do `window.location.href`. Browsers privacy-first (Comet, Brave, Chrome anônimo) descartam o cookie `__Secure-better-auth.state` setado via AJAX cross-site. **FIX**: endpoint `GET /api/auth/oauth-start` no backend que faz redirect 302 com Set-Cookie no mesmo navigation event. `LoginButton.tsx` usa `window.location.href` direto pra esse endpoint (top-level navigation).
+- **404 em `/api/auth/oauth-start` mesmo com rota registrada** (bug descoberto 2026-04-17): causado por `app.all('/api/auth/*', toNodeHandler(auth))` interceptar TUDO em `/api/auth/*` ANTES da rota específica. **FIX**: registrar rotas específicas de `/api/auth/*` ANTES do catch-all do Better Auth em `main.ts`.
+- **Sessão não persiste em browsers privacy-first** (lim. conhecida): Comet/Brave/Chrome-anônimo bloqueiam cookies cross-domain entre `oriscloud.com.br` e `oris-backend-api-production.up.railway.app`. **FIX definitivo**: subdomínio `api.oriscloud.com.br` (pendente). **Mitigação atual**: OAuth funciona em ~90% dos browsers (Chrome normal, Edge, Firefox padrão, Safari padrão).
+- **CORS blocking em Railway**: causado por reordenação de middleware. **FIX**: `toNodeHandler(auth)` DEVE vir ANTES de `express.json()` global.
 - **`ReferenceError: __dirname is not defined`**: causado por uso de `__dirname` direto em módulo ESM. **FIX**: sempre usar `fileURLToPath(import.meta.url)`.
 - **Build falha com `Cannot find module`**: causado por import sem extensão `.js` em backend ESM. **FIX**: imports locais SEMPRE com `.js` no backend (frontend não precisa, Vite resolve).
 - **Runtime error `reflect-metadata`**: causado por import deixado por engano. **FIX**: não importar bibliotecas que não são usadas.

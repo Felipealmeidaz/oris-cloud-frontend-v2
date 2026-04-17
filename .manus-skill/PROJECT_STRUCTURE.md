@@ -126,27 +126,44 @@ GET /login            → Login (OAuth buttons)
 GET /dashboard        → Dashboard (área logada)
                         Se NÃO logado → redirect /login
 
-POST /api/auth/*      → Better Auth (handled por toNodeHandler)
+GET  /api/auth/oauth-start → endpoint CUSTOM (antes do catch-all Better Auth)
+                             inicia OAuth via top-level navigation (302 + Set-Cookie)
+POST /api/auth/*      → Better Auth (handled por toNodeHandler) — catch-all
 GET  /api/health      → health check
-GET  /api/me          → dados do usuário atual (requer cookie)
+GET  /api/v1/users/me → dados do usuário atual (requer cookie de sessão)
 ```
 
 ## Fluxo de Auth OAuth (Google/GitHub)
 
+Arquitetura atual usa **top-level navigation** pra garantir que o cookie de state do Better Auth persista em browsers modernos (sem depender de 3rd party cookies via AJAX).
+
 ```
 1. User clica <LoginButton provider="google" />
-2. Frontend POST /api/auth/sign-in/social { provider, callbackURL: "origin/dashboard" }
-3. Backend (Better Auth) responde { url: "https://accounts.google.com/..." }
-4. Frontend faz window.location.href = url (HARD REDIRECT, não SPA)
-5. User autoriza no provider
-6. Provider redireciona para backend: /api/auth/callback/google?code=xxx
-7. Backend troca code por access_token, busca user info, cria/atualiza user na DB
-8. Backend seta cookie de sessão e redireciona para callbackURL ("origin/dashboard")
-9. Frontend carrega /dashboard, useAuthContext() lê cookie e mostra área logada
+2. Frontend faz window.location.href = `${API_URL}/api/auth/oauth-start?provider=google&callbackURL=...`
+   (top-level navigation, NÃO AJAX — crítico pra cookie cross-site persistir)
+3. Backend GET /api/auth/oauth-start:
+   - Chama auth.handler() internamente (Web Request/Response Better Auth)
+   - Copia Set-Cookie (__Secure-better-auth.state) pro response final
+   - Responde 302 com Location: accounts.google.com/... + Set-Cookie no MESMO response
+4. Browser segue o 302 → provider
+5. User autoriza no provider (Google/GitHub)
+6. Provider redireciona pra backend: /api/auth/callback/google?code=xxx&state=xxx
+7. Better Auth lê cookie __Secure-better-auth.state e valida state
+8. Backend troca code por access_token, busca user info, cria/atualiza user na DB
+9. Backend seta cookie de SESSÃO (better-auth.session_token) e redireciona pra callbackURL
+10. Frontend carrega /dashboard, useAuthContext() → useSession() busca /api/auth/session
+    com credentials:'include', cookie vai junto, sessão reconhecida, área logada renderiza.
 ```
 
+**Limitação conhecida:** passo 10 falha em browsers privacy-first (Comet, Brave, Chrome anônimo, Firefox strict) porque cookies cross-domain entre `oriscloud.com.br` e `oris-backend-api-production.up.railway.app` são bloqueados em AJAX. Funciona em Chrome normal, Edge, Firefox padrão, Safari padrão.
+
+**Solução definitiva (pendente):** subdomínio `api.oriscloud.com.br` via DNS CNAME → cookies viram first-party, funciona em todo browser.
+
 **Se quebrar em qualquer passo**, o fix quase sempre está em:
-- CORS whitelist no backend (`server/src/main.ts`)
-- Redirect URIs cadastradas no provider (Google/GitHub dashboard)
-- Variáveis de ambiente `GOOGLE_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, etc.
-- Cookie settings em `server/src/lib/auth.ts` (`sameSite: 'none'`, `secure: true`)
+
+- Ordem de middlewares em `server/src/main.ts` — `/api/auth/oauth-start` ANTES de `app.all('/api/auth/*', ...)` senão catch-all intercepta
+- CORS whitelist no backend com `credentials: true` + origin específico (não `*`)
+- Redirect URIs cadastradas no provider (Google/GitHub dashboard) batem com `BETTER_AUTH_URL`
+- Variáveis de ambiente `GOOGLE_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `BETTER_AUTH_URL`, `BETTER_AUTH_SECRET`
+- Cookie settings em `server/src/lib/auth.ts` (`sameSite: 'none'`, `secure: true`, `httpOnly: true`)
+- Frontend `credentials: 'include'` no authClient (`client/src/lib/auth-client.ts`)

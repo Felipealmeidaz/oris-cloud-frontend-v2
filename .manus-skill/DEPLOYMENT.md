@@ -21,6 +21,22 @@ O Manus TEM MCP GitHub ativo e **consegue fazer commits + push diretamente no re
 - ❌ Forçar re-deploy no Vercel quando o webhook falha
 - ❌ **PRETENDER** que o deploy completou só porque o commit foi feito
 
+### 🚫 PROIBIDO: Force Push
+
+**NUNCA usar `git push --force` ou `git push -f` no repositório `oris-cloud-frontend-v2`.**
+
+Em 2026-04-17 o Manus AI fez force push e **destruiu o commit `b5885ba`** que continha a atualização da skill v1.1.0 (lições aprendidas sobre OAuth state_mismatch, ordem de middleware, top-level navigation). O Felipe teve que recuperar via `git reflog` + `git checkout`.
+
+**Regras obrigatórias antes de qualquer push:**
+
+1. **SEMPRE** `git fetch origin` + `git log HEAD..origin/main --oneline` antes de pushar
+2. Se há commits remotos novos, **SEMPRE** `git pull --rebase origin main` antes
+3. Se aparecer conflito no rebase, **PARAR** e pedir orientação ao Felipe — nunca usar `--force` pra "resolver"
+4. Se a operação MCP GitHub via API falhar com erro de fast-forward, **PARAR** e pedir ao Felipe pra fazer o merge manualmente
+5. **NUNCA** sobrescrever histórico — commits do Felipe ou de sessões anteriores são INVIOLÁVEIS
+
+**Se o Manus AI quebrar essa regra novamente**, o Felipe deve revogar acesso de write do MCP GitHub temporariamente até confirmar que a regra foi entendida.
+
 ### Fluxo Real de Deploy (quando funciona)
 
 ```
