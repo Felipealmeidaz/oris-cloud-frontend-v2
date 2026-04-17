@@ -7,45 +7,35 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { Router, Route, useLocation } from "wouter";
 
 import Header from "./components/Header";
-import Hero from "./components/Hero";
-import About from "./components/About";
-import Founders from "./components/Founders";
-import Plans from "./components/Plans";
-import HowItWorks from "./components/HowItWorks";
-import Features from "./components/Features";
-import FAQ from "./components/FAQ";
-import Footer from "./components/Footer";
 import { Login } from "./pages/Login";
 import { Dashboard } from "./pages/Dashboard";
+import { LandingPage } from "./pages/LandingPage";
 
 /**
- * Landing page publica. Se o usuario ja esta logado, redireciona
- * automaticamente para /dashboard (comportamento padrao de SaaS).
+ * Splash screen que redireciona automaticamente para login ou dashboard
  */
-function HomePage() {
+function SplashScreen() {
   const [, navigate] = useLocation();
   const { isLoggedIn, isLoading } = useAuthContext();
 
   useEffect(() => {
-    if (!isLoading && isLoggedIn) {
-      navigate('/dashboard');
+    if (!isLoading) {
+      if (isLoggedIn) {
+        navigate('/dashboard');
+      } else {
+        navigate('/login');
+      }
     }
   }, [isLoading, isLoggedIn, navigate]);
 
   return (
-    <>
-      <Header />
-      <main>
-        <Hero />
-        <About />
-        <Founders />
-        <Plans />
-        <HowItWorks />
-        <Features />
-        <FAQ />
-      </main>
-      <Footer />
-    </>
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="text-center">
+        <div className="h-16 w-16 rounded-full border-4 border-white/20 border-t-white animate-spin mx-auto mb-6" />
+        <h1 className="text-2xl font-bold text-white">Oris Cloud</h1>
+        <p className="text-foreground/60 mt-2">Carregando...</p>
+      </div>
+    </div>
   );
 }
 
@@ -57,7 +47,8 @@ function App() {
           <TooltipProvider>
             <Router>
               <div className="min-h-screen w-full bg-background text-foreground">
-                <Route path="/" component={HomePage} />
+                <Route path="/" component={SplashScreen} />
+                <Route path="/landing" component={LandingPage} />
                 <Route path="/login" component={Login} />
                 <Route path="/dashboard" component={Dashboard} />
               </div>
