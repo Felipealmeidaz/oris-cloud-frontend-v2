@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import express from 'express';
-import cors from 'cors';
+import cors, { CorsOptions } from 'cors';
 import helmet from 'helmet';
 import { config } from 'dotenv';
 
@@ -8,7 +8,18 @@ config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+// CORS allowed origins (string exact match or RegExp pattern)
+const EXTRA_ORIGINS = (process.env.EXTRA_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+const ALLOWED_ORIGINS: Array<string | RegExp> = [
+  'https://oriscloud.com.br',
+  'https://www.oriscloud.com.br',
+  /\.vercel\.app$/,
+  /\.up\.railway\.app$/,
+  /^http:\/\/localhost:\d+$/,
+  /^http:\/\/127\.0\.0\.1:\d+$/,
+  ...EXTRA_ORIGINS,
+];
 
 // Middleware
 // Security: Helmet
@@ -27,13 +38,25 @@ app.use(helmet({
   xssFilter: true,
 }));
 
-// CORS
-app.use(cors({
-  origin: FRONTEND_URL,
+// CORS with whitelist validation
+const corsOptions: CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests without origin header (server-to-server, curl, Postman)
+    if (!origin) return callback(null, true);
+    const isAllowed = ALLOWED_ORIGINS.some(allowed =>
+      typeof allowed === 'string' ? allowed === origin : allowed.test(origin)
+    );
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS blocked: origin '${origin}' not in whitelist`));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+};
+app.use(cors(corsOptions));
 
 // Body parsers
 app.use(express.json({ limit: '10mb' }));
@@ -77,8 +100,8 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`✅ Backend running on http://localhost:${PORT}`);
-  console.log(`🔒 Security: Helmet enabled`);
-  console.log(`🔗 Frontend: ${FRONTEND_URL}`);
-  console.log(`📍 Health check: GET /api/health`);
+  console.log(`Backend running on http://localhost:${PORT}`);
+  console.log(`Security: Helmet enabled`);
+  console.log(`CORS allowed origins: ${ALLOWED_ORIGINS.length} entries`);
+  console.log(`Health check: GET /api/health`);
 });
