@@ -1,7 +1,7 @@
 {
   "name": "oris-cloud-backend",
   "version": "1.0.0",
-  "description": "Backend NestJS para Oris Cloud - Plataforma de Cloud Gaming",
+  "description": "Backend Express + TypeScript para Oris Cloud - Plataforma de Cloud Gaming",
   "main": "dist/main.js",
   "type": "module",
   "scripts": {
@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
-    "nestjs",
+    "express",
+    "typescript",
     "cloud-gaming",
     "api",
     "rest"
@@ -20,26 +21,16 @@
   "author": "Oris Cloud",
   "license": "MIT",
   "dependencies": {
-    "@nestjs/common": "^10.3.0",
-    "@nestjs/core": "^10.3.0",
-    "@nestjs/jwt": "^12.1.0",
-    "@nestjs/passport": "^10.0.3",
-    "@nestjs/typeorm": "^10.0.0",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "passport": "^0.7.0",
-    "passport-jwt": "^4.0.1",
+    "helmet": "^7.1.0",
     "pg": "^8.11.3",
-    "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.3.19",
+    "prisma": "^5.7.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.6",
-    "@types/passport-jwt": "^3.0.13",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   }
