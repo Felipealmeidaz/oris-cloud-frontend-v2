@@ -32,6 +32,7 @@ Sempre consulte estes documentos de referência **antes** de gerar ou modificar 
 2. **TECH_STACK.md** — Versões exatas, libs permitidas, convenções de imports (incluindo a regra crítica de extensão `.js` no backend ESM).
 3. **PROJECT_STRUCTURE.md** — Mapa de diretórios e responsabilidades de cada pasta.
 4. **DESIGN_SYSTEM.md** — Paleta de cores, padrões de animação `framer-motion`, componentes `shadcn/ui` disponíveis, exemplos de código aprovados.
+5. **DEPLOYMENT.md** — ⚠️ CRÍTICO: workflow de entrega de código ao Felipe. Explica o que você (Manus) PODE e NÃO PODE fazer. Você NÃO tem acesso direto ao terminal, GitHub ou Vercel do Felipe. Leia antes de prometer qualquer "deploy".
 
 ## Comportamento Esperado
 
@@ -50,6 +51,8 @@ Sempre consulte estes documentos de referência **antes** de gerar ou modificar 
 
 ### ❌ Nunca fazer
 
+- **Pretender que fez commit/push/deploy quando não fez** — você NÃO tem acesso ao terminal do Felipe. Sempre peça pra ele rodar os comandos e reportar. Ver DEPLOYMENT.md.
+- **Dizer "já está ao ar" ou "deploy concluído"** sem o Felipe confirmar o push. Isso quebra a confiança no workflow.
 - Modificar `client/src/components/LoginButton.tsx` (tem bypass crítico do SDK Better Auth)
 - Modificar `client/src/lib/auth-client.ts`, `server/src/lib/auth.ts`, `server/src/db/schema.ts` sem ler CRITICAL_RULES.md
 - Trocar a stack (React Router, Next.js, styled-components, Redux, Zustand, etc.)
