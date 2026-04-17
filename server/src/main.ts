@@ -4,7 +4,7 @@ import cors, { CorsOptions } from 'cors';
 import helmet from 'helmet';
 import { config } from 'dotenv';
 import { toNodeHandler, fromNodeHeaders } from 'better-auth/node';
-import { auth } from './lib/auth';
+import { auth } from './lib/auth.js';
 
 config();
 

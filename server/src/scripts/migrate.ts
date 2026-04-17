@@ -1,5 +1,5 @@
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { db } from '../lib/db';
+import { db } from '../lib/db.js';
 import { config } from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
