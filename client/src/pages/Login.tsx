@@ -157,8 +157,12 @@ export function Login() {
           >
             <p className="text-center text-xs md:text-sm text-foreground/60">
               Ao fazer login, você concorda com nossos{' '}
-              <a href="#" className="text-blue-400/80 hover:text-blue-300 transition-colors">
+              <a href="/terms" className="text-blue-400/80 hover:text-blue-300 transition-colors">
                 Termos de Serviço
+              </a>
+              {' '}e{' '}
+              <a href="/privacy" className="text-blue-400/80 hover:text-blue-300 transition-colors">
+                Política de Privacidade
               </a>
             </p>
           </motion.div>

@@ -10,6 +10,8 @@ import Header from "./components/Header";
 import { Login } from "./pages/Login";
 import { Dashboard } from "./pages/Dashboard";
 import { LandingPage } from "./pages/LandingPage";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 /**
  * Splash screen que redireciona automaticamente para login ou dashboard
@@ -51,6 +53,8 @@ function App() {
                 <Route path="/landing" component={LandingPage} />
                 <Route path="/login" component={Login} />
                 <Route path="/dashboard" component={Dashboard} />
+                <Route path="/terms" component={Terms} />
+                <Route path="/privacy" component={Privacy} />
               </div>
               <Toaster />
             </Router>
