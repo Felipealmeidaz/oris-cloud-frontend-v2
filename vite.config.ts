@@ -209,4 +209,17 @@ export default defineConfig({
       "Cross-Origin-Resource-Policy": "same-origin",
     },
   },
+  preview: {
+    port: Number(process.env.PORT) || 4173,
+    strictPort: false,
+    host: true,
+    allowedHosts: [
+      ".railway.app",
+      ".up.railway.app",
+      "oriscloud.com.br",
+      "www.oriscloud.com.br",
+      "localhost",
+      "127.0.0.1",
+    ],
+  },
 });
