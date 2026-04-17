@@ -43,7 +43,11 @@ export const auth = betterAuth({
   },
   advanced: {
     defaultCookieAttributes: {
-      secure: process.env.NODE_ENV === 'production',
+      // Force secure: true. Railway does not set NODE_ENV=production by default,
+      // so relying on it breaks cookies in prod. Local dev uses HTTPS via tunnel
+      // or proxy if needed, otherwise tests should hit /api/auth via localhost
+      // which browsers treat as secure context.
+      secure: true,
       sameSite: 'none',
       httpOnly: true,
     },
