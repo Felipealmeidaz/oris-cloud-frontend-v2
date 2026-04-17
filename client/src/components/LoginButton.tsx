@@ -1,5 +1,6 @@
 import { signIn } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 
 interface LoginButtonProps {
   provider: 'google' | 'github';
@@ -7,11 +8,25 @@ interface LoginButtonProps {
 }
 
 export function LoginButton({ provider, className }: LoginButtonProps) {
+  const [loading, setLoading] = useState(false);
+
   const handleSignIn = async () => {
-    await signIn.social({
-      provider,
-      callbackURL: '/',
-    });
+    setLoading(true);
+    try {
+      const result = await signIn.social({
+        provider,
+        callbackURL: '/',
+      });
+      // Better Auth SDK should redirect the browser automatically. If for any
+      // reason it doesn't (older SDK version, bug, fetch fallback), we fallback
+      // to manual navigation using the URL returned by the backend.
+      if (result?.data?.url) {
+        window.location.href = result.data.url;
+      }
+    } catch (err) {
+      console.error(`Failed to sign in with ${provider}:`, err);
+      setLoading(false);
+    }
   };
 
   const providerConfig = {
@@ -33,9 +48,10 @@ export function LoginButton({ provider, className }: LoginButtonProps) {
       variant="outline"
       className={className}
       type="button"
+      disabled={loading}
     >
       <span className="mr-2">{config.icon}</span>
-      {config.label}
+      {loading ? 'Redirecting...' : config.label}
     </Button>
   );
 }
