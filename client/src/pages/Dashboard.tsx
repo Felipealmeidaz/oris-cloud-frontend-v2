@@ -19,21 +19,51 @@ import {
   Info,
   Tag,
   HelpCircle,
+  X,
 } from 'lucide-react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 /**
  * Dashboard com navegação real entre abas (Início, Sobre, Planos, FAQ)
- * e painéis internos (Visão Geral, Histórico, Sessões, Configurações)
+ * Sincronizado com hash da URL (#home, #about, #plans, #faq)
+ * Dados reais do usuário (sem mocks) e "Seu Plano Atual" em modal flutuante
  */
 export function Dashboard() {
   const [, navigate] = useLocation();
   const { user, isLoading, isLoggedIn, logout } = useAuthContext();
   const [activeMainTab, setActiveMainTab] = useState('home');
   const [activeInternalTab, setActiveInternalTab] = useState('overview');
+  const [showPlanModal, setShowPlanModal] = useState(false);
+
+  // Sincronizar com hash da URL
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1) || 'home';
+      const validTabs = ['home', 'about', 'plans', 'faq'];
+      if (validTabs.includes(hash)) {
+        setActiveMainTab(hash);
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Mudar hash quando aba principal muda
+  const handleMainTabChange = (tabId: string) => {
+    setActiveMainTab(tabId);
+    window.location.hash = tabId;
+  };
 
   // Proteção de rota: se não logado, manda pra /login
   useEffect(() => {
@@ -59,59 +89,6 @@ export function Dashboard() {
 
   const displayName = user?.name || user?.email?.split('@')[0] || 'Usuário';
   const avatarInitial = (user?.name || user?.email || '?').charAt(0).toUpperCase();
-
-  // Mock data para histórico de compras
-  const purchaseHistory = [
-    {
-      id: 1,
-      plan: 'Pro',
-      price: 99.90,
-      date: '2025-04-15',
-      status: 'Ativo',
-      duration: '1 mês',
-    },
-    {
-      id: 2,
-      plan: 'Básico',
-      price: 49.90,
-      date: '2025-03-15',
-      status: 'Expirado',
-      duration: '1 mês',
-    },
-    {
-      id: 3,
-      plan: 'Ultra',
-      price: 199.90,
-      date: '2025-02-15',
-      status: 'Expirado',
-      duration: '1 mês',
-    },
-  ];
-
-  // Mock data para sessões
-  const sessions = [
-    {
-      id: 1,
-      device: 'MacBook Pro',
-      location: 'São Paulo, BR',
-      lastActive: '2 horas atrás',
-      current: true,
-    },
-    {
-      id: 2,
-      device: 'iPhone 15',
-      location: 'São Paulo, BR',
-      lastActive: '1 dia atrás',
-      current: false,
-    },
-    {
-      id: 3,
-      device: 'Windows PC',
-      location: 'Rio de Janeiro, BR',
-      lastActive: '5 dias atrás',
-      current: false,
-    },
-  ];
 
   const handleLogout = async () => {
     await logout();
@@ -223,7 +200,7 @@ export function Dashboard() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveMainTab(tab.id)}
+                  onClick={() => handleMainTabChange(tab.id)}
                   className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 ${
                     activeMainTab === tab.id
                       ? 'border-cyan-500 text-white'
@@ -281,19 +258,19 @@ export function Dashboard() {
                     {[
                       {
                         label: 'Plano Ativo',
-                        value: 'Pro',
+                        value: 'Sem plano',
                         icon: Zap,
                         color: 'from-cyan-500 to-blue-600',
                       },
                       {
                         label: 'Próximo Pagamento',
-                        value: '15 de Maio',
+                        value: 'N/A',
                         icon: Clock,
                         color: 'from-green-500 to-emerald-600',
                       },
                       {
                         label: 'Horas Usadas',
-                        value: '42.5h',
+                        value: '0h',
                         icon: Clock,
                         color: 'from-purple-500 to-pink-600',
                       },
@@ -317,37 +294,53 @@ export function Dashboard() {
                     })}
                   </div>
 
-                  {/* Plano Atual */}
-                  <motion.div
-                    variants={itemVariants}
-                    className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-xl p-8"
-                  >
-                    <h3 className="text-xl font-bold text-white mb-6">Seu Plano Atual</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div>
-                        <p className="text-foreground/60 mb-2">Plano</p>
-                        <p className="text-3xl font-bold text-white mb-4">Pro</p>
-                        <p className="text-foreground/60 mb-6">R$ 99,90/mês</p>
-                        <Button className="w-full gap-2">
-                          <Zap size={18} />
-                          Fazer Upgrade para Ultra
-                        </Button>
-                      </div>
-                      <div className="space-y-3">
-                        {[
-                          '✓ Até 8 cores de CPU',
-                          '✓ 16GB de RAM',
-                          '✓ RTX 4070',
-                          '✓ Suporte prioritário',
-                          '✓ Armazenamento 500GB',
-                        ].map((feature, idx) => (
-                          <p key={idx} className="text-foreground/80">
-                            {feature}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
+                  {/* Botão para abrir modal "Seu Plano Atual" */}
+                  <motion.div variants={itemVariants}>
+                    <Button
+                      onClick={() => setShowPlanModal(true)}
+                      className="w-full gap-2 py-6"
+                    >
+                      <Zap size={18} />
+                      Ver Seu Plano Atual
+                    </Button>
                   </motion.div>
+
+                  {/* Modal "Seu Plano Atual" */}
+                  <Dialog open={showPlanModal} onOpenChange={setShowPlanModal}>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl">Seu Plano Atual</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-6 py-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                          <div>
+                            <p className="text-foreground/60 mb-2">Status</p>
+                            <p className="text-3xl font-bold text-white mb-4">Sem plano ativo</p>
+                            <p className="text-foreground/60 mb-6">Escolha um plano para começar</p>
+                            <Button className="w-full gap-2">
+                              <Zap size={18} />
+                              Escolher Plano
+                            </Button>
+                          </div>
+                          <div className="space-y-3">
+                            <p className="text-sm text-foreground/60 uppercase tracking-widest">
+                              Recursos disponíveis
+                            </p>
+                            {[
+                              'Acesso a plataforma',
+                              'Suporte por email',
+                              'Documentação completa',
+                              'Comunidade Discord',
+                            ].map((feature, idx) => (
+                              <p key={idx} className="text-foreground/80">
+                                ✓ {feature}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </motion.div>
               )}
 
@@ -360,35 +353,15 @@ export function Dashboard() {
                   className="space-y-4"
                 >
                   <h3 className="text-xl font-bold text-white mb-6">Histórico de Compras</h3>
-                  {purchaseHistory.map((purchase, idx) => (
-                    <motion.div
-                      key={purchase.id}
-                      variants={itemVariants}
-                      className="rounded-lg border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between hover:bg-white/[0.05] transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
-                          <CreditCard size={20} className="text-white" />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-white">{purchase.plan}</p>
-                          <p className="text-sm text-foreground/60">{purchase.date}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-white">R$ {purchase.price.toFixed(2)}</p>
-                        <p
-                          className={`text-sm ${
-                            purchase.status === 'Ativo'
-                              ? 'text-green-400'
-                              : 'text-foreground/60'
-                          }`}
-                        >
-                          {purchase.status}
-                        </p>
-                      </div>
-                    </motion.div>
-                  ))}
+                  <motion.div
+                    variants={itemVariants}
+                    className="rounded-lg border border-white/10 bg-white/[0.02] p-8 text-center"
+                  >
+                    <p className="text-foreground/60">Nenhuma compra registrada ainda</p>
+                    <p className="text-sm text-foreground/40 mt-2">
+                      Escolha um plano para começar sua jornada na Oris Cloud
+                    </p>
+                  </motion.div>
                 </motion.div>
               )}
 
@@ -401,31 +374,15 @@ export function Dashboard() {
                   className="space-y-4"
                 >
                   <h3 className="text-xl font-bold text-white mb-6">Sessões Ativas</h3>
-                  {sessions.map((session, idx) => (
-                    <motion.div
-                      key={session.id}
-                      variants={itemVariants}
-                      className="rounded-lg border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between hover:bg-white/[0.05] transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
-                          <User size={20} className="text-white" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <p className="font-semibold text-white">{session.device}</p>
-                            {session.current && (
-                              <span className="px-2 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-medium">
-                                Atual
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-sm text-foreground/60">{session.location}</p>
-                        </div>
-                      </div>
-                      <p className="text-sm text-foreground/60">{session.lastActive}</p>
-                    </motion.div>
-                  ))}
+                  <motion.div
+                    variants={itemVariants}
+                    className="rounded-lg border border-white/10 bg-white/[0.02] p-8 text-center"
+                  >
+                    <p className="text-foreground/60">Nenhuma sessão ativa no momento</p>
+                    <p className="text-sm text-foreground/40 mt-2">
+                      Suas sessões aparecerão aqui quando você ativar um plano
+                    </p>
+                  </motion.div>
                 </motion.div>
               )}
 
@@ -521,12 +478,12 @@ export function Dashboard() {
               >
                 <h2 className="text-3xl font-bold text-white mb-4">Sobre a Oris Cloud</h2>
                 <p className="text-foreground/80 leading-relaxed mb-6">
-                  Oris Cloud é uma plataforma brasileira de cloud gaming que democratiza o acesso a jogos de alta qualidade. 
+                  Oris Cloud é uma plataforma brasileira de cloud gaming que democratiza o acesso a jogos de alta qualidade.
                   Acreditamos que todo jogador merece a melhor experiência, independentemente do hardware que possui.
                 </p>
                 <h3 className="text-xl font-semibold text-white mb-3">Nossa Missão</h3>
                 <p className="text-foreground/80 leading-relaxed">
-                  Oferecer acesso a jogos de alta performance sem a necessidade de investimento em hardware caro. 
+                  Oferecer acesso a jogos de alta performance sem a necessidade de investimento em hardware caro.
                   Queremos que todos possam jogar seus títulos favoritos com a melhor qualidade possível.
                 </p>
               </motion.div>
