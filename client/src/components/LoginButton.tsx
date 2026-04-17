@@ -23,7 +23,7 @@ export function LoginButton({ provider, className }: LoginButtonProps) {
         credentials: 'include',
         body: JSON.stringify({
           provider,
-          callbackURL: `${window.location.origin}/`,
+          callbackURL: `${window.location.origin}/dashboard`,
         }),
       });
 

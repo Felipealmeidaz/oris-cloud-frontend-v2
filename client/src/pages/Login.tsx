@@ -7,10 +7,10 @@ export function Login() {
   const [, navigate] = useLocation();
   const { isLoggedIn } = useAuthContext();
 
-  // Redirecionar se já logado
+  // Redirecionar se já logado: vai direto para o dashboard
   useEffect(() => {
     if (isLoggedIn) {
-      navigate('/');
+      navigate('/dashboard');
     }
   }, [isLoggedIn, navigate]);
 
