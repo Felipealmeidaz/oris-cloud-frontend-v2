@@ -16,7 +16,7 @@ const STEPS: Step[] = [
   {
     icon: LogIn,
     title: 'Crie sua conta',
-    description: 'Login rápido com Google ou GitHub. Sem cadastro longo, sem verificação por telefone.',
+    description: 'Login via Google ou GitHub. Autenticação OAuth sem etapa adicional.',
   },
   {
     icon: Cloud,
@@ -56,11 +56,10 @@ export default function HowItWorks() {
             Onboarding
           </div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent">
-            Menos de 2 minutos<br />pra você estar jogando
+            Como funciona
           </h2>
           <p className="text-base md:text-lg text-foreground/60 max-w-xl mx-auto">
-            Sem configuração manual, sem driver pra instalar, sem espera.
-            Do pagamento ao primeiro frame em 4 passos simples.
+            Quatro passos do pagamento à primeira sessão em tela.
           </p>
         </motion.div>
 
@@ -85,10 +84,10 @@ export default function HowItWorks() {
             </div>
             <div>
               <h3 className="text-base md:text-lg font-semibold text-white leading-tight">
-                Linha do tempo completa
+                Tempo estimado por etapa
               </h3>
               <p className="text-xs text-foreground/50">
-                Do clique inicial ao jogo rodando em tela cheia
+                Do clique inicial à primeira sessão
               </p>
             </div>
           </div>

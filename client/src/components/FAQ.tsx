@@ -62,14 +62,13 @@ export default function FAQ() {
           className="text-center mb-12"
         >
           <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full border border-white/10 bg-white/[0.02] text-[11px] font-medium text-foreground/60">
-            Perguntas frequentes
+            FAQ
           </div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent">
-            Tudo o que você<br />quer saber
+            Perguntas frequentes
           </h2>
           <p className="text-base md:text-lg text-foreground/60 max-w-xl mx-auto">
-            Respostas diretas pras dúvidas mais comuns sobre hardware, suporte,
-            pagamento e compatibilidade.
+            Hardware, suporte, pagamento e compatibilidade.
           </p>
         </motion.div>
 
@@ -98,11 +97,10 @@ export default function FAQ() {
             <MessageCircle size={18} className="text-foreground/80" />
           </div>
           <h3 className="text-base md:text-lg font-semibold text-white leading-tight mb-1.5">
-            Não achou o que queria?
+            Não achou o que procurava?
           </h3>
           <p className="text-sm text-foreground/60 leading-relaxed mb-5 max-w-md mx-auto">
-            Fala com a gente direto no Discord. Time real, resposta rápida,
-            sem bot de formulário.
+            Pergunte diretamente no Discord da comunidade.
           </p>
           <motion.a
             href={DISCORD_URL}

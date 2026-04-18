@@ -10,33 +10,33 @@ interface Highlight {
 const HIGHLIGHTS: Highlight[] = [
   {
     icon: Cloud,
-    title: 'Infra AWS real',
-    description: 'Instâncias G4dn rodando em sa-east-1 (São Paulo). Sem revenda, sem intermediário, sem hardware caseiro.',
+    title: 'Infraestrutura AWS',
+    description: 'Instâncias EC2 G4dn na região sa-east-1 (São Paulo), sem camada de revenda.',
   },
   {
     icon: Zap,
-    title: 'Performance de data center',
+    title: 'Hardware dedicado',
     description: 'GPU NVIDIA Tesla T4 com 16GB GDDR6. Processador Intel Xeon, SSD NVMe, memória DDR4 ECC.',
   },
   {
     icon: Shield,
-    title: 'Dados e sessão protegidos',
-    description: 'Login OAuth via Google ou GitHub, snapshot criptografado, transmissão segura via Parsec ou Moonlight.',
+    title: 'Autenticação e transmissão',
+    description: 'Login OAuth via Google ou GitHub. Snapshot da VM persistido entre sessões. Transmissão por Parsec ou Moonlight.',
   },
 ];
 
 const WHY_POINTS = [
-  'Sem download gigante antes de cada sessão',
-  'Acesso instantâneo, basta abrir o app cliente',
-  'Planos quinzenal ou mensal, sem fidelidade',
-  'Suporte direto com o time no Discord',
+  'Jogos instalados permanecem na VM entre sessões',
+  'Conexão via Parsec ou Moonlight em qualquer dispositivo',
+  'Planos quinzenal e mensal',
+  'Suporte por Discord',
 ];
 
 const STATS = [
   { label: 'Comunidade Discord', value: '+100' },
-  { label: 'Snapshot', value: 'Preservado' },
-  { label: 'Uptime alvo', value: '99.9%' },
-  { label: 'Região', value: 'São Paulo' },
+  { label: 'Snapshot', value: 'Persistente' },
+  { label: 'SLA alvo', value: '99.9%' },
+  { label: 'Região', value: 'sa-east-1' },
 ];
 
 export default function About() {
@@ -58,11 +58,11 @@ export default function About() {
             Sobre a Oris
           </div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent">
-            Cloud gaming sem<br />intermediário, sem enrolação
+            Cloud gaming hospedado<br />na AWS São Paulo
           </h2>
           <p className="text-base md:text-lg text-foreground/60 max-w-2xl mx-auto">
-            A Oris aluga hardware AWS de verdade pra você jogar com performance
-            de data center. Sem PC gamer, sem setup complicado.
+            A Oris disponibiliza instâncias EC2 dedicadas com GPU NVIDIA Tesla T4
+            para jogos em streaming via Parsec ou Moonlight.
           </p>
         </motion.div>
 
@@ -81,9 +81,9 @@ export default function About() {
                 Nossa missão
               </p>
               <p className="text-sm md:text-base text-foreground/75 leading-relaxed">
-                Tornar hardware de alto desempenho acessível pra qualquer jogador no
-                Brasil, sem exigir investimento de R$ 5 mil em um PC gamer. Você paga
-                só pelo tempo que realmente vai jogar.
+                Disponibilizar hardware de alta performance por aluguel temporário,
+                eliminando o custo inicial de montar um PC gamer dedicado. Pagamento
+                por período de uso.
               </p>
             </div>
 

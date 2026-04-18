@@ -17,14 +17,14 @@ const FOUNDERS: Founder[] = [
     name: 'Adryan',
     handle: 'S2',
     role: 'Fundador & CEO',
-    bio: 'Lidera a estratégia e o crescimento da Oris Cloud. Responsável por parcerias com comunidades gamer e expansão de capacidade na AWS.',
+    bio: 'Responsável pela estratégia, parcerias com comunidades gamer e expansão de capacidade de instâncias na AWS.',
     initial: 'A',
   },
   {
     name: 'Felipe Almeida',
     handle: 'Z2ky',
-    role: 'Co-fundador e CTO',
-    bio: 'Responsável pela infraestrutura, arquitetura cloud e otimização de performance. Cuida do stack técnico e da experiência de quem joga.',
+    role: 'Co-fundador & CTO',
+    bio: 'Responsável pela arquitetura cloud, provisionamento das VMs, otimização de streaming e stack de autenticação.',
     initial: 'F',
     linkedin: 'https://www.linkedin.com/in/felipe-almeida-7ab062336/',
   },
@@ -46,14 +46,13 @@ export default function Founders() {
           className="text-center mb-14"
         >
           <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full border border-white/10 bg-white/[0.02] text-[11px] font-medium text-foreground/60">
-            Quem tá por trás
+            Time
           </div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent">
-            Construído por gamers,<br />pra gamers
+            Quem fundou a Oris
           </h2>
           <p className="text-base md:text-lg text-foreground/60 max-w-xl mx-auto">
-            Uma dupla que junta visão de negócio com expertise em infraestrutura cloud pra
-            entregar cloud gaming sério no Brasil.
+            Dois fundadores dividindo estratégia de negócio e infraestrutura técnica.
           </p>
         </motion.div>
 
@@ -74,10 +73,10 @@ export default function Founders() {
         >
           <Quote size={28} className="text-foreground/20 mb-4" strokeWidth={2.5} />
           <blockquote className="text-lg md:text-xl text-foreground/85 leading-relaxed mb-4 max-w-3xl">
-            A Oris Cloud nasceu de uma frustração simples: querer jogar títulos modernos sem
-            investir R$ 5 mil num PC. Aplicamos nossa experiência em infraestrutura AWS e
-            comunidades gamer pra entregar uma plataforma que funciona de verdade, com
-            transparência total sobre o hardware que você tá usando.
+            A Oris Cloud nasceu de uma frustração comum: querer jogar títulos modernos sem
+            investir R$ 5 mil num PC. Combinamos nossa experiência em infraestrutura AWS e
+            comunidades gamer pra montar uma plataforma transparente sobre o hardware que
+            você está usando.
           </blockquote>
           <p className="text-sm text-foreground/50">
             Adryan &amp; Felipe, fundadores

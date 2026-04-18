@@ -20,43 +20,43 @@ interface Feature {
 const FEATURES: Feature[] = [
   {
     icon: Zap,
-    title: 'Sem PC gamer caro',
-    description: 'Acesse hardware de data center sem gastar R$ 5 mil em um setup. Você paga só pelo tempo que joga.',
+    title: 'Sem investimento em PC',
+    description: 'Hardware AWS alugado por período. Pagamento quinzenal ou mensal, não por hora de uso.',
   },
   {
     icon: Globe,
-    title: 'Servidor em São Paulo',
-    description: 'Instâncias AWS na região sa-east-1 garantindo latência baixa pra jogadores do Sudeste e Sul.',
+    title: 'Região São Paulo',
+    description: 'Instâncias EC2 na região sa-east-1 da AWS, com latência baixa pro Sudeste e Sul do Brasil.',
   },
   {
     icon: Lock,
-    title: 'Conexão segura',
-    description: 'Sessões protegidas via Parsec e Moonlight, transmissão com criptografia e autenticação OAuth.',
+    title: 'Conexão criptografada',
+    description: 'Sessões transmitidas via Parsec ou Moonlight com criptografia fim a fim. Autenticação OAuth.',
   },
   {
     icon: Cloud,
-    title: 'Seus jogos, seu snapshot',
-    description: 'Você instala seus próprios jogos. A gente faz snapshot da sua VM para que nada se perca entre sessões.',
+    title: 'Snapshot persistente',
+    description: 'Você instala seus próprios jogos. O estado da VM é preservado entre sessões.',
   },
   {
     icon: Cpu,
-    title: 'Hardware real AWS',
-    description: 'NVIDIA Tesla T4 com 16GB GDDR6 e Intel Xeon. Mesma infra usada por empresas de IA e VFX.',
+    title: 'Hardware EC2 G4dn',
+    description: 'NVIDIA Tesla T4 com 16GB GDDR6, Intel Xeon e memória DDR4 ECC.',
   },
   {
     icon: Headphones,
-    title: 'Suporte no Discord',
-    description: 'Time disponível de segunda a sábado no canal oficial. Resolução rápida, sem ticket burocrático.',
+    title: 'Suporte via Discord',
+    description: 'Atendimento de segunda a sábado pelo canal oficial da comunidade.',
   },
   {
     icon: TrendingUp,
-    title: 'Preços transparentes',
-    description: 'Quinzenal ou mensal, sem taxa extra. Cancelou, acabou. Nada de fidelidade forçada.',
+    title: 'Planos simples',
+    description: 'Quinzenal e mensal, sem taxa adicional e sem contrato de fidelidade.',
   },
   {
     icon: Wifi,
-    title: 'Streaming otimizado',
-    description: 'Protocolos modernos garantem 60fps estáveis em 1080p e 1440p até em conexões de 25 Mbps.',
+    title: 'Streaming 60fps',
+    description: 'Parsec e Moonlight entregam 60fps em 1080p e 1440p em conexões a partir de 25 Mbps.',
   },
 ];
 
@@ -79,11 +79,10 @@ export default function Features() {
             Por que Oris
           </div>
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent">
-            Feito pra quem leva<br />jogo a sério
+            Características<br />da plataforma
           </h2>
           <p className="text-base md:text-lg text-foreground/60 max-w-xl mx-auto">
-            8 pilares que separam a Oris de qualquer serviço genérico de
-            cloud gaming no Brasil.
+            Infraestrutura AWS dedicada, conexão por Parsec ou Moonlight e suporte via Discord.
           </p>
         </motion.div>
 
@@ -104,10 +103,10 @@ export default function Features() {
         >
           <div className="flex-1">
             <h3 className="text-lg md:text-xl font-semibold text-white leading-tight mb-1.5">
-              Pronto pra trocar seu PC fraco por uma VM na AWS?
+              Disponível em dois planos
             </h3>
             <p className="text-sm text-foreground/60 leading-relaxed">
-              Veja os planos disponíveis. Sem fidelidade, sem pegadinha.
+              Veja valores e condições.
             </p>
           </div>
           <motion.a
