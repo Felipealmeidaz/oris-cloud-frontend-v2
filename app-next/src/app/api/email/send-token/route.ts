@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import { getResend } from "@/lib/resend";
 import { logger } from "@/lib/logger";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const INTERNAL_SECRET = process.env.INTERNAL_WEBHOOK_SECRET;
 
 export async function POST(request: NextRequest) {
@@ -30,7 +29,7 @@ export async function POST(request: NextRequest) {
 
     // Enviar email
     logger.info("Resend envio de email iniciado", { email });
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: process.env.RESEND_FROM_EMAIL as string,
       to: email,
       subject: "Pagamento Confirmado - Seu Token Oris Cloud",
