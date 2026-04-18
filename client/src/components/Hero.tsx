@@ -10,7 +10,6 @@ import {
   Sparkles,
   Zap,
 } from 'lucide-react';
-import TypingAnimation from './TypingAnimation';
 
 /**
  * Hero da landing Oris Cloud.
@@ -55,57 +54,38 @@ export default function Hero() {
               <span className="font-semibold text-white">NVIDIA Tesla T4</span>
             </motion.div>
 
-            {/* H1 com gradient sutil */}
+            {/* H1 sem gradient uniforme, mistura de pesos Space Grotesk */}
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
-              className="text-5xl md:text-6xl lg:text-[4.5rem] font-bold tracking-tight leading-[1.02] mb-6"
+              className="text-5xl md:text-6xl lg:text-[4.5rem] font-bold tracking-tight leading-[1.02] mb-6 text-white"
             >
-              <span className="bg-gradient-to-br from-white via-white to-white/60 bg-clip-text text-transparent">
-                Cloud gaming
-              </span>
+              <span className="font-semibold">Seu PC é</span>{' '}
+              <em className="not-italic font-bold relative inline-block">
+                lixo
+                <span
+                  aria-hidden
+                  className="absolute left-0 right-0 bottom-[0.1em] h-[0.14em] bg-white/70 -rotate-[2deg] rounded-full"
+                />
+              </em>
               <br />
-              <span className="bg-gradient-to-br from-white via-white to-white/60 bg-clip-text text-transparent">
-                sem concessões.
+              <span className="text-white/60 font-normal">
+                e tá tudo bem. Aluga um nosso.
               </span>
             </motion.h1>
 
-            {/* Subhead com typing */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
-              className="text-xl md:text-2xl text-foreground/70 mb-6 font-light"
-            >
-              <span>Jogue </span>
-              <TypingAnimation
-                words={[
-                  'no notebook da escola.',
-                  'na TV da sala.',
-                  'sem PC gamer.',
-                  'de qualquer lugar.',
-                ]}
-                typeSpeed={70}
-                deleteSpeed={40}
-                pauseDelay={2200}
-                loop={true}
-              />
-            </motion.div>
-
-            {/* Description */}
+            {/* Descrição direta, sem estrutura de bullet IA */}
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-base md:text-lg text-foreground/60 max-w-xl mx-auto lg:mx-0 mb-9 leading-relaxed"
+              className="text-base md:text-lg text-foreground/65 max-w-xl mx-auto lg:mx-0 mb-9 leading-relaxed"
             >
-              VMs dedicadas com GPU{' '}
-              <span className="text-white font-medium">NVIDIA Tesla T4</span>{' '}
-              rodando em{' '}
-              <span className="text-white font-medium">AWS São Paulo</span>.
-              Latência baixa, transparência total sobre o hardware e zero
-              investimento em PC.
+              Você liga a máquina pela Oris, abre o Parsec do celular, da TV
+              ou do notebook da faculdade e joga. A GPU{' '}
+              <span className="text-white font-medium">Tesla T4</span> tá na
+              AWS São Paulo. O lag, se tiver, é culpa do seu Wi-Fi.
             </motion.p>
 
             {/* CTAs */}
