@@ -54,38 +54,29 @@ export default function Hero() {
               <span className="font-semibold text-white">NVIDIA Tesla T4</span>
             </motion.div>
 
-            {/* H1 sem gradient uniforme, mistura de pesos Space Grotesk */}
+            {/* H1 factual, tom normal */}
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
               className="text-5xl md:text-6xl lg:text-[4.5rem] font-bold tracking-tight leading-[1.02] mb-6 text-white"
             >
-              <span className="font-semibold">Seu PC é</span>{' '}
-              <em className="not-italic font-bold relative inline-block">
-                lixo
-                <span
-                  aria-hidden
-                  className="absolute left-0 right-0 bottom-[0.1em] h-[0.14em] bg-white/70 -rotate-[2deg] rounded-full"
-                />
-              </em>
+              Cloud gaming
               <br />
-              <span className="text-white/60 font-normal">
-                e tá tudo bem. Aluga um nosso.
-              </span>
+              com hardware AWS.
             </motion.h1>
 
-            {/* Descrição direta, sem estrutura de bullet IA */}
+            {/* Descrição factual */}
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               className="text-base md:text-lg text-foreground/65 max-w-xl mx-auto lg:mx-0 mb-9 leading-relaxed"
             >
-              Você liga a máquina pela Oris, abre o Parsec do celular, da TV
-              ou do notebook da faculdade e joga. A GPU{' '}
-              <span className="text-white font-medium">Tesla T4</span> tá na
-              AWS São Paulo. O lag, se tiver, é culpa do seu Wi-Fi.
+              VMs dedicadas com GPU{' '}
+              <span className="text-white font-medium">NVIDIA Tesla T4</span>{' '}
+              rodando em São Paulo. Você conecta pelo Parsec ou Moonlight e
+              joga do notebook, celular ou TV.
             </motion.p>
 
             {/* CTAs */}
@@ -148,10 +139,10 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.35, duration: 0.8, ease: 'easeOut' }}
-            className="lg:col-span-5 relative h-[520px] hidden lg:block"
+            className="lg:col-span-5 hidden lg:flex flex-col items-center justify-center gap-5"
           >
             <FloatingVMCard />
-            <FloatingChips />
+            <InstanceLabel />
           </motion.div>
         </div>
 
@@ -221,9 +212,9 @@ function BackgroundLayer() {
 function FloatingVMCard() {
   return (
     <motion.div
-      animate={{ y: [0, -10, 0] }}
+      animate={{ y: [0, -6, 0] }}
       transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[420px]"
+      className="relative w-full max-w-[420px]"
     >
       <div className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.015] backdrop-blur-xl p-6 shadow-2xl">
         {/* Shine/highlight no topo */}
@@ -324,30 +315,22 @@ function SpecCard({
 }
 
 // ============================================================
-// FLOATING CHIPS: decorations ao redor do VM card
+// INSTANCE LABEL: info técnica estática abaixo do VM card
 // ============================================================
 
-function FloatingChips() {
+function InstanceLabel() {
   return (
-    <>
-      <motion.div
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-        className="absolute -top-3 -left-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-black/60 backdrop-blur-md text-[11px] font-semibold tracking-wide text-white shadow-lg"
-      >
-        <span className="text-foreground/50">Powered by</span>
-        <span>AWS</span>
-      </motion.div>
-
-      <motion.div
-        animate={{ y: [0, -8, 0] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
-        className="absolute -top-1 -right-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-black/60 backdrop-blur-md text-[11px] font-semibold text-white shadow-lg"
-      >
-        <Zap size={11} className="text-foreground/60" />
-        1440p Ultra
-      </motion.div>
-    </>
+    <div className="w-full max-w-[420px] flex items-center justify-center gap-2 text-[10px] font-mono text-foreground/45">
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-white/[0.08] bg-white/[0.02]">
+        <span className="text-foreground/35">tipo:</span>
+        <span className="text-foreground/80">g4dn.xlarge</span>
+      </span>
+      <span className="text-foreground/25">·</span>
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-white/[0.08] bg-white/[0.02]">
+        <span className="text-foreground/35">região:</span>
+        <span className="text-foreground/80">sa-east-1</span>
+      </span>
+    </div>
   );
 }
 
