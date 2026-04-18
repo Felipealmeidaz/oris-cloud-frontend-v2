@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "@/lib/auth-client";
 import { OrisLogo } from "@/components/ui/oris-logo";
 
@@ -45,6 +45,12 @@ interface User {
 export default function Header() {
     const { data: session, isPending } = useSession();
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    // Hydration gate: evita React #418 (mismatch SSR/CSR) e /undefined 404
+    // SSR nao tem session, entao sempre renderiza Loading ate o client montar
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
+    const showLoading = !mounted || isPending;
 
     const navItems = [
         { name: "Inicio", link: "/" },
@@ -147,7 +153,7 @@ export default function Header() {
 
                 {/* User Section */}
                 <div className="relative z-20">
-                    {!isPending ? session ? <LoggedComponent user={session.user as User} /> : <NotLoggedComponent /> : <LoadingComponent />}
+                    {showLoading ? <LoadingComponent /> : session ? <LoggedComponent user={session.user as User} /> : <NotLoggedComponent />}
                 </div>
             </NavBody>
 
@@ -164,7 +170,7 @@ export default function Header() {
 
                     {/* Right Side: User + Menu Toggle */}
                     <div className="flex items-center gap-2">
-                        {!isPending ? session ? <LoggedComponent user={session.user as User} /> : <NotLoggedComponent /> : <LoadingComponent />}
+                        {showLoading ? <LoadingComponent /> : session ? <LoggedComponent user={session.user as User} /> : <NotLoggedComponent />}
                         <MobileNavToggle
                             isOpen={isMobileMenuOpen}
                             onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
