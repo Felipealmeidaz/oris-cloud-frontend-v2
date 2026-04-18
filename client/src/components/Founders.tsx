@@ -1,125 +1,154 @@
 import { motion } from 'framer-motion';
-import { Linkedin } from 'lucide-react';
+import { Linkedin, MessageCircle, Quote } from 'lucide-react';
+
+const DISCORD_URL = 'https://discord.gg/3pT7NJGZ97';
+
+interface Founder {
+  name: string;
+  handle: string;
+  role: string;
+  bio: string;
+  initial: string;
+  linkedin?: string;
+}
+
+const FOUNDERS: Founder[] = [
+  {
+    name: 'Adryan',
+    handle: 'S2',
+    role: 'Fundador & CEO',
+    bio: 'Lidera a estratégia e o crescimento da Oris Cloud. Responsável por parcerias com comunidades gamer e expansão de capacidade na AWS.',
+    initial: 'A',
+  },
+  {
+    name: 'Felipe Almeida',
+    handle: 'Z2ky',
+    role: 'Co-fundador · CTO',
+    bio: 'Responsável pela infraestrutura, arquitetura cloud e otimização de performance. Cuida do stack técnico e da experiência de quem joga.',
+    initial: 'F',
+    linkedin: 'https://www.linkedin.com/in/felipe-almeida-7ab062336/',
+  },
+];
 
 export default function Founders() {
-  const founders = [
-    {
-      name: 'Adryan (S2)',
-      role: 'Fundador & CEO',
-      bio: 'Visionário e líder estratégico com foco em inovação em cloud gaming. Responsável pela direção geral e expansão da Oris Cloud.',
-      image: '👨‍💼',
-      social: {},
-    },
-    {
-      name: 'Felipe (Z2ky)',
-      role: 'Co-fundador',
-      bio: 'Especialista em infraestrutura cloud e otimização de performance. Lidera o desenvolvimento técnico e arquitetura da plataforma.',
-      image: '👨‍💻',
-      social: {
-        linkedin: 'https://www.linkedin.com/in/felipe-almeida-7ab062336/',
-      },
-    },
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8 },
-    },
-  };
-
   return (
-    <section className="py-20 relative overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 pointer-events-none" />
+    <section id="founders" className="py-24 relative overflow-hidden border-t border-white/[0.05]">
+      {/* Background sutil */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_0%,rgba(255,255,255,0.02),transparent_60%)] pointer-events-none" />
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-100px' }}
-        className="container mx-auto px-4 max-w-6xl relative z-10"
-      >
-        {/* Header */}
-        <motion.div variants={itemVariants} className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Nossos Fundadores</h2>
-          <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-            Uma equipe dedicada a transformar a forma como as pessoas jogam na nuvem.
+      <div className="container mx-auto px-4 max-w-5xl relative z-10">
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-14"
+        >
+          <div className="inline-flex items-center gap-2 mb-5 px-3 py-1 rounded-full border border-white/10 bg-white/[0.02] text-[11px] font-medium text-foreground/60">
+            Quem tá por trás
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent">
+            Construído por gamers,<br />pra gamers
+          </h2>
+          <p className="text-base md:text-lg text-foreground/60 max-w-xl mx-auto">
+            Uma dupla que junta visão de negócio com expertise em infraestrutura cloud pra
+            entregar cloud gaming sério no Brasil.
           </p>
         </motion.div>
 
-        {/* Founders Grid */}
-        <motion.div
-          variants={containerVariants}
-          className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto mb-16"
-        >
-          {founders.map((founder, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              whileHover={{ y: -10 }}
-              className="group relative"
-            >
-              {/* Card Background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-2xl blur-xl group-hover:blur-2xl transition-all" />
-
-              {/* Card Content */}
-              <div className="relative p-8 rounded-2xl bg-card border border-border group-hover:border-blue-500/50 transition-all">
-                {/* Avatar */}
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center text-5xl mb-6 mx-auto"
-                >
-                  {founder.image}
-                </motion.div>
-
-                {/* Info */}
-                <h3 className="text-xl font-bold text-center mb-2">{founder.name}</h3>
-                <p className="text-sm text-blue-400 text-center mb-4">{founder.role}</p>
-                <p className="text-sm text-foreground/70 text-center mb-6">{founder.bio}</p>
-
-                {/* Social Links */}
-                <div className="flex justify-center gap-4">
-                  {founder.social.linkedin && (
-                    <motion.a
-                      href={founder.social.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.2 }}
-                      className="p-2 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
-                    >
-                      <Linkedin size={18} className="text-blue-400" />
-                    </motion.a>
-                  )}
-                </div>
-              </div>
-            </motion.div>
+        {/* Founders grid */}
+        <div className="grid md:grid-cols-2 gap-5 mb-12">
+          {FOUNDERS.map((founder, i) => (
+            <FounderCard key={founder.name} founder={founder} delay={0.15 + i * 0.1} />
           ))}
-        </motion.div>
+        </div>
 
-        {/* Story */}
+        {/* Story card */}
         <motion.div
-          variants={itemVariants}
-          className="p-8 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/30"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="relative rounded-2xl border border-white/[0.08] bg-white/[0.015] p-8 md:p-10"
         >
-          <h3 className="text-2xl font-bold mb-4">Nossa História</h3>
-          <p className="text-foreground/70 leading-relaxed">
-            Oris Cloud nasceu da paixão por gaming e da visão de democratizar o acesso a jogos de alta qualidade. Adryan e Felipe se uniram com o objetivo de criar uma plataforma que pudesse trazer a experiência de gaming de próxima geração para todos, independentemente do hardware disponível. Hoje, estamos orgulhosos de servir jogadores em todo o Brasil e expandindo globalmente.
+          <Quote size={28} className="text-foreground/20 mb-4" strokeWidth={2.5} />
+          <blockquote className="text-lg md:text-xl text-foreground/85 leading-relaxed mb-4 max-w-3xl">
+            A Oris Cloud nasceu de uma frustração simples: querer jogar títulos modernos sem
+            investir R$ 5 mil num PC. Aplicamos nossa experiência em infraestrutura AWS e
+            comunidades gamer pra entregar uma plataforma que funciona de verdade — com
+            transparência total sobre o hardware que você tá usando.
+          </blockquote>
+          <p className="text-sm text-foreground/50">
+            — Adryan &amp; Felipe, fundadores
           </p>
         </motion.div>
-      </motion.div>
+      </div>
     </section>
+  );
+}
+
+// ============================================================
+// FounderCard
+// ============================================================
+
+function FounderCard({ founder, delay }: { founder: Founder; delay: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ duration: 0.6, delay, ease: 'easeOut' }}
+      className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.015] backdrop-blur-sm p-6 hover:border-white/15 transition-colors"
+    >
+      <div className="flex items-start gap-4 mb-5">
+        {/* Avatar minimal — inicial estilizada */}
+        <div className="relative shrink-0">
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-white/[0.12] to-white/[0.04] border border-white/10 flex items-center justify-center">
+            <span className="text-2xl font-bold text-white tracking-tight">{founder.initial}</span>
+          </div>
+          {/* Ring sutil no hover */}
+          <div className="absolute inset-0 rounded-2xl ring-1 ring-white/0 group-hover:ring-white/20 transition-all pointer-events-none" />
+        </div>
+
+        {/* Nome + handle + role */}
+        <div className="flex-1 min-w-0 pt-1">
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <h3 className="text-lg font-bold text-white leading-none">{founder.name}</h3>
+            <span className="text-xs font-mono text-foreground/40">@{founder.handle}</span>
+          </div>
+          <p className="text-xs font-medium text-foreground/60 mt-1.5">{founder.role}</p>
+        </div>
+      </div>
+
+      {/* Bio */}
+      <p className="text-sm text-foreground/65 leading-relaxed mb-5">{founder.bio}</p>
+
+      {/* Social / contato */}
+      <div className="flex items-center gap-2">
+        {founder.linkedin ? (
+          <a
+            href={founder.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`LinkedIn de ${founder.name}`}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-white/10 bg-white/[0.02] text-xs text-foreground/70 hover:text-white hover:border-white/25 transition-colors"
+          >
+            <Linkedin size={12} />
+            LinkedIn
+          </a>
+        ) : (
+          <a
+            href={DISCORD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-white/10 bg-white/[0.02] text-xs text-foreground/70 hover:text-white hover:border-white/25 transition-colors"
+          >
+            <MessageCircle size={12} />
+            Fala comigo no Discord
+          </a>
+        )}
+      </div>
+    </motion.div>
   );
 }
