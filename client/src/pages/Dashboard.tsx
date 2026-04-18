@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import SettingsTab from '@/components/dashboard/SettingsTab';
 
@@ -153,10 +152,6 @@ export function Dashboard() {
           )}
         </motion.div>
       </main>
-
-      <div className="mt-auto">
-        <Footer />
-      </div>
     </div>
   );
 }
