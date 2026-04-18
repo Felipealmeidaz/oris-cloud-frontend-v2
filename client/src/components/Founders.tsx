@@ -23,7 +23,7 @@ const FOUNDERS: Founder[] = [
   {
     name: 'Felipe Almeida',
     handle: 'Z2ky',
-    role: 'Co-fundador · CTO',
+    role: 'Co-fundador e CTO',
     bio: 'Responsável pela infraestrutura, arquitetura cloud e otimização de performance. Cuida do stack técnico e da experiência de quem joga.',
     initial: 'F',
     linkedin: 'https://www.linkedin.com/in/felipe-almeida-7ab062336/',
@@ -76,11 +76,11 @@ export default function Founders() {
           <blockquote className="text-lg md:text-xl text-foreground/85 leading-relaxed mb-4 max-w-3xl">
             A Oris Cloud nasceu de uma frustração simples: querer jogar títulos modernos sem
             investir R$ 5 mil num PC. Aplicamos nossa experiência em infraestrutura AWS e
-            comunidades gamer pra entregar uma plataforma que funciona de verdade — com
+            comunidades gamer pra entregar uma plataforma que funciona de verdade, com
             transparência total sobre o hardware que você tá usando.
           </blockquote>
           <p className="text-sm text-foreground/50">
-            — Adryan &amp; Felipe, fundadores
+            Adryan &amp; Felipe, fundadores
           </p>
         </motion.div>
       </div>
@@ -102,7 +102,7 @@ function FounderCard({ founder, delay }: { founder: Founder; delay: number }) {
       className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.015] backdrop-blur-sm p-6 hover:border-white/15 transition-colors"
     >
       <div className="flex items-start gap-4 mb-5">
-        {/* Avatar minimal — inicial estilizada */}
+        {/* Avatar minimal com inicial estilizada */}
         <div className="relative shrink-0">
           <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-white/[0.12] to-white/[0.04] border border-white/10 flex items-center justify-center">
             <span className="text-2xl font-bold text-white tracking-tight">{founder.initial}</span>

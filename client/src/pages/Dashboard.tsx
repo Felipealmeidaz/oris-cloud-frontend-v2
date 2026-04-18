@@ -192,7 +192,7 @@ function UserAvatar({
 }
 
 // ============================================================
-// OVERVIEW TAB — plano atual + stats sóbrios
+// OVERVIEW TAB: plano atual + stats sóbrios
 // ============================================================
 
 function OverviewTab() {
@@ -200,7 +200,7 @@ function OverviewTab() {
 
   const stats = [
     { label: 'Plano', value: 'Sem plano', icon: Zap, hint: 'Ainda não contratado' },
-    { label: 'Próxima cobrança', value: '—', icon: CreditCard, hint: 'Contrate um plano' },
+    { label: 'Próxima cobrança', value: 'Sem cobrança', icon: CreditCard, hint: 'Contrate um plano' },
     { label: 'Horas neste mês', value: '0h', icon: Clock, hint: 'Nenhuma sessão' },
   ];
 
@@ -259,7 +259,7 @@ function OverviewTab() {
 }
 
 // ============================================================
-// MACHINES TAB — empty state
+// MACHINES TAB: empty state
 // ============================================================
 
 function MachinesTab() {
@@ -290,7 +290,7 @@ function MachinesTab() {
 }
 
 // ============================================================
-// HISTORY TAB — empty state
+// HISTORY TAB: empty state
 // ============================================================
 
 function HistoryTab() {

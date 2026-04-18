@@ -30,7 +30,7 @@ export default function Hero() {
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* ============================ */}
-          {/* LEFT COLUMN — content        */}
+          {/* LEFT COLUMN: content            */}
           {/* ============================ */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -81,10 +81,10 @@ export default function Hero() {
               <span>Jogue </span>
               <TypingAnimation
                 words={[
-                  'no seu notebook',
-                  'em qualquer dispositivo',
-                  'sem comprar PC',
-                  'com hardware de data center',
+                  'no notebook da escola.',
+                  'na TV da sala.',
+                  'sem PC gamer.',
+                  'de qualquer lugar.',
                 ]}
                 typeSpeed={70}
                 deleteSpeed={40}
@@ -100,11 +100,12 @@ export default function Hero() {
               transition={{ delay: 0.3 }}
               className="text-base md:text-lg text-foreground/60 max-w-xl mx-auto lg:mx-0 mb-9 leading-relaxed"
             >
-              Máquinas virtuais de alta performance com GPU{' '}
-              <span className="text-white font-medium">NVIDIA Tesla T4</span>,
-              rodando na infraestrutura{' '}
-              <span className="text-white font-medium">AWS</span> com servidores
-              em São Paulo. Latência baixa. Zero investimento em hardware.
+              VMs dedicadas com GPU{' '}
+              <span className="text-white font-medium">NVIDIA Tesla T4</span>{' '}
+              rodando em{' '}
+              <span className="text-white font-medium">AWS São Paulo</span>.
+              Latência baixa, transparência total sobre o hardware e zero
+              investimento em PC.
             </motion.p>
 
             {/* CTAs */}
@@ -120,7 +121,7 @@ export default function Hero() {
                 whileTap={{ scale: 0.98 }}
                 className="group relative inline-flex items-center gap-2 px-7 py-3.5 bg-white text-black font-semibold rounded-lg overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.15)]"
               >
-                <span className="relative z-10">Começar agora</span>
+                <span className="relative z-10">Ver planos</span>
                 <ArrowRight
                   size={16}
                   className="relative z-10 transition-transform group-hover:translate-x-0.5"
@@ -129,14 +130,16 @@ export default function Hero() {
                 <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
               </motion.button>
 
-              <motion.button
-                onClick={() => navigate('/#about')}
+              <motion.a
+                href="https://discord.gg/3pT7NJGZ97"
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center gap-2 px-7 py-3.5 border border-white/15 text-white font-medium rounded-lg hover:bg-white/[0.03] hover:border-white/25 transition-colors"
               >
-                <span>Ver planos</span>
-              </motion.button>
+                <span>Entrar na lista de espera</span>
+              </motion.a>
             </motion.div>
 
             {/* Trust bar com stats inline */}
@@ -159,7 +162,7 @@ export default function Hero() {
           </motion.div>
 
           {/* ============================ */}
-          {/* RIGHT COLUMN — VM card       */}
+          {/* RIGHT COLUMN: VM card           */}
           {/* ============================ */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
@@ -173,7 +176,7 @@ export default function Hero() {
         </div>
 
         {/* ============================ */}
-        {/* STATS BAR — bottom             */}
+        {/* STATS BAR bottom                 */}
         {/* ============================ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -193,13 +196,13 @@ export default function Hero() {
 }
 
 // ============================================================
-// BACKGROUND — grid pattern + light orbs + radial gradient
+// BACKGROUND: grid pattern + light orbs + radial gradient
 // ============================================================
 
 function BackgroundLayer() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {/* Gradient sutil do topo — iluminação neutra (sem cores saturadas) */}
+      {/* Gradient sutil do topo: iluminação neutra (sem cores saturadas) */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_-10%,rgba(255,255,255,0.04),transparent_60%)]" />
 
       {/* Grid pattern SVG bem discreto */}
@@ -232,7 +235,7 @@ function BackgroundLayer() {
 }
 
 // ============================================================
-// FLOATING VM CARD — specs de uma VM ativa (mockup)
+// FLOATING VM CARD: specs de uma VM ativa (mockup)
 // ============================================================
 
 function FloatingVMCard() {
@@ -255,7 +258,7 @@ function FloatingVMCard() {
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
             </div>
             <span className="text-[11px] font-mono text-foreground/50 ml-2">
-              vm-oris-premium
+              vm-oris-sp
             </span>
           </div>
           <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-400">
@@ -293,7 +296,7 @@ function FloatingVMCard() {
           </div>
         </div>
 
-        {/* Status row — substituiu o botão Conectar (mockup visual) */}
+        {/* Status row substitui o botão Conectar (mockup visual) */}
         <div className="flex items-center justify-between px-3 py-2.5 rounded-lg bg-black/30 border border-white/5">
           <div className="flex items-center gap-2 text-[11px] font-mono text-foreground/60">
             <span className="text-emerald-400">$</span>
@@ -309,7 +312,7 @@ function FloatingVMCard() {
         </div>
       </div>
 
-      {/* Glow atrás do card — sutil branco, sem cores saturadas */}
+      {/* Glow atrás do card: sutil branco, sem cores saturadas */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-white/[0.04] via-transparent to-white/[0.02] blur-3xl" />
     </motion.div>
   );
@@ -341,7 +344,7 @@ function SpecCard({
 }
 
 // ============================================================
-// FLOATING CHIPS — decorations ao redor do VM card
+// FLOATING CHIPS: decorations ao redor do VM card
 // ============================================================
 
 function FloatingChips() {

@@ -174,7 +174,7 @@ function ProfileSection({ user }: { user: SettingsTabProps['user'] }) {
           <label className="block text-sm text-foreground/70 mb-2">Email</label>
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white/10 bg-white/[0.02]">
             <span className="text-foreground/90 text-sm flex-1 truncate">
-              {user?.email || '—'}
+              {user?.email || 'Sem email'}
             </span>
             {user?.emailVerified && (
               <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-400">
