@@ -74,8 +74,9 @@ function Invoke-VercelApi {
     [object]$Body = $null
   )
   $uri = "$ApiBase$Path"
-  if ($uri -notlike "*teamId=*") {
-    $sep = if ($uri -like "*?*") { "&" } else { "?" }
+  if (-not $uri.Contains("teamId=")) {
+    # Usa .Contains em vez de -like porque ? e * sao wildcards do -like
+    $sep = if ($uri.Contains("?")) { "&" } else { "?" }
     $uri = "$uri$sep" + "teamId=$TeamId"
   }
 
