@@ -1,7 +1,13 @@
 /**
  * Zod Validation Schemas - Authentication & User Operations
- * 
- * Schemas de validação para operações de autenticação, email e senha.
+ *
+ * Schemas de validação para operações de autenticação.
+ *
+ * Nota: schemas de OTP (sendVerificationEmailSchema, verifyEmailCodeSchema,
+ * sendResetCodeSchema, verifyResetCodeSchema, resetPasswordSchema) foram
+ * removidos junto com os 6 endpoints custom de email/senha. O fluxo agora
+ * é 100 por cento better-auth com link mágico — tokens são validados
+ * internamente pelo better-auth no endpoint /api/auth/*.
  */
 
 import { z } from 'zod';
@@ -26,72 +32,6 @@ export const passwordSchema = z.string()
   .max(100, 'Senha muito longa');
 
 /**
- * Schema para envio de código de verificação de email
- * Usado em: POST /api/email/send-verification
- */
-export const sendVerificationEmailSchema = z.object({
-  email: emailSchema,
-});
-
-export type SendVerificationEmailInput = z.infer<typeof sendVerificationEmailSchema>;
-
-/**
- * Schema para verificar código de email
- * Usado em: POST /api/email/verify
- */
-export const verifyEmailCodeSchema = z.object({
-  userId: z.string()
-    .uuid('userId deve ser um UUID válido')
-    .trim(),
-  
-  code: z.string()
-    .length(6, 'Código deve ter 6 dígitos')
-    .regex(/^\d{6}$/, 'Código deve conter apenas números'),
-});
-
-export type VerifyEmailCodeInput = z.infer<typeof verifyEmailCodeSchema>;
-
-/**
- * Schema para envio de código de reset de senha
- * Usado em: POST /api/password/send-reset-code
- */
-export const sendResetCodeSchema = z.object({
-  email: emailSchema,
-});
-
-export type SendResetCodeInput = z.infer<typeof sendResetCodeSchema>;
-
-/**
- * Schema para verificar código de reset
- * Usado em: POST /api/password/verify-code
- */
-export const verifyResetCodeSchema = z.object({
-  email: emailSchema,
-  
-  code: z.string()
-    .length(6, 'Código deve ter 6 dígitos')
-    .regex(/^\d{6}$/, 'Código deve conter apenas números'),
-});
-
-export type VerifyResetCodeInput = z.infer<typeof verifyResetCodeSchema>;
-
-/**
- * Schema para resetar senha
- * Usado em: POST /api/password/reset
- */
-export const resetPasswordSchema = z.object({
-  email: emailSchema,
-  
-  code: z.string()
-    .length(6, 'Código deve ter 6 dígitos')
-    .regex(/^\d{6}$/, 'Código deve conter apenas números'),
-  
-  newPassword: passwordSchema,
-});
-
-export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
-
-/**
  * Schema para registro de usuário
  */
 export const registerSchema = z.object({
@@ -99,9 +39,9 @@ export const registerSchema = z.object({
     .min(2, 'Nome deve ter no mínimo 2 caracteres')
     .max(100, 'Nome muito longo')
     .trim(),
-  
+
   email: emailSchema,
-  
+
   password: passwordSchema,
 });
 

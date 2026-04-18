@@ -50,14 +50,19 @@ model account {
   @@index([userId])
 }
 
-model EmailVerification {
-  id        String   @id @default(cuid())
-  email     String
-  code      String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+/// Modelo nativo do better-auth para armazenar tokens de verificação
+/// de email e reset de senha. Substituiu o modelo custom EmailVerification
+/// (que armazenava códigos OTP) quando migramos pro fluxo de link mágico.
+/// Ver src/lib/auth.ts para os callbacks que geram estes registros.
+model verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  @@index([email])
+  @@index([identifier])
 }
 
 model Plan {
