@@ -1,11 +1,8 @@
 {
-  "buildCommand": "pnpm run build",
-  "outputDirectory": "dist/public",
-  "framework": "vite",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "installCommand": "cd app-next && pnpm install --frozen-lockfile",
+  "buildCommand": "cd app-next && pnpm exec prisma generate && pnpm exec next build",
+  "outputDirectory": "app-next/.next",
+  "devCommand": "cd app-next && pnpm exec next dev"
 }

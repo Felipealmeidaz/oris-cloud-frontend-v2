@@ -1,8 +1,25 @@
+# Codigo legado (projeto Vite antigo, ficara so no git historico)
+client/
 server/
+shared/
+dist/
+vite.config.ts
+
+# Build artefatos
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Git/ambiente
 .git/
 .gitignore
-node_modules/
 .env
 .env.local
+.env.*.local
+
+# Logs e temporarios
 .manus-logs/
 .manus-skill/
+.preview/
+.playwright-mcp/
+*.log
