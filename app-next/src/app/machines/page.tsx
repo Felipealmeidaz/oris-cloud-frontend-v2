@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useSession } from "@/lib/auth-client";
 
 import {
     Card,
@@ -25,7 +26,9 @@ import {
     Settings,
     ShieldCheck,
     AlertTriangle,
-    Info
+    Info,
+    UserPlus,
+    LogIn
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -33,6 +36,10 @@ import { Button } from "@/components/ui/button";
 import "./styles.css";
 
 export default function Machines() {
+    const { data: session, isPending } = useSession();
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
+
     return (
         <div className="min-h-screen w-screen flex flex-col items-center justify-center bg-[rgb(9,9,11)] text-white ">
 
@@ -48,9 +55,27 @@ export default function Machines() {
                     <h1 className="mb-3 text-xl font-normal tracking-wide text-white sm:text-2xl md:text-3xl lg:text-4xl">
                         Encontre o plano ideal sem complicações!
                     </h1>
-                    <p className="mx-auto mb-8 text-sm text-gray-400 sm:text-base">
+                    <p className="mx-auto mb-6 text-sm text-gray-400 sm:text-base">
                         Selecione o plano que melhor atende às suas necessidades e comece a desfrutar dos benefícios de imediato.
                     </p>
+
+                    {/* CTA de criar conta / entrar — so aparece pra quem NAO esta logado */}
+                    {mounted && !isPending && !session && (
+                        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8">
+                            <Link href="/auth?tab=register">
+                                <Button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 h-11">
+                                    <UserPlus className="h-4 w-4 mr-2" />
+                                    Criar conta grátis
+                                </Button>
+                            </Link>
+                            <Link href="/auth?tab=login">
+                                <Button variant="outline" className="border-gray-700 hover:bg-white/5 px-6 h-11">
+                                    <LogIn className="h-4 w-4 mr-2" />
+                                    Já tenho conta
+                                </Button>
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </section>
 

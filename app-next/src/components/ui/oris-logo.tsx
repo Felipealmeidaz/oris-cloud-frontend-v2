@@ -45,8 +45,9 @@ export function OrisLogo({ className = "", size = 32, withWordmark = false }: Or
         />
       </svg>
       {withWordmark && (
-        <span className="font-display font-semibold text-[1.05rem] tracking-tight text-white">
-          Oris <span className="text-white/60">Cloud</span>
+        <span className="font-display font-semibold text-[1.05rem] tracking-tight text-white inline-flex items-baseline gap-[0.28em]">
+          <span>Oris</span>
+          <span className="text-white/60">Cloud</span>
         </span>
       )}
     </span>

@@ -28,16 +28,20 @@ export const auth = betterAuth({
     /**
      * Enviado quando usuário solicita reset de senha via authClient.forgetPassword.
      * `url` já contém o token e aponta pra `redirectTo` (/reset-password?token=...).
-     * Usamos `void` pra não aguardar (evita timing attacks).
+     * Aguardamos a promise pra que erros do Resend propaguem pro better-auth e
+     * consequentemente pro client (evita silent fail quando env var tá errada).
      */
     sendResetPassword: async ({ user, url }) => {
-      void sendPasswordResetEmail({
-        to: user.email,
-        url,
-        name: user.name,
-      }).catch((err) => {
+      try {
+        await sendPasswordResetEmail({
+          to: user.email,
+          url,
+          name: user.name,
+        });
+      } catch (err) {
         logger.error("Falha no callback sendResetPassword", { err, email: user.email });
-      });
+        throw err;
+      }
     },
   },
   emailVerification: {
@@ -48,13 +52,16 @@ export const auth = betterAuth({
      * que valida o token e redireciona pra home após verificação.
      */
     sendVerificationEmail: async ({ user, url }) => {
-      void sendVerificationEmail({
-        to: user.email,
-        url,
-        name: user.name,
-      }).catch((err) => {
+      try {
+        await sendVerificationEmail({
+          to: user.email,
+          url,
+          name: user.name,
+        });
+      } catch (err) {
         logger.error("Falha no callback sendVerificationEmail", { err, email: user.email });
-      });
+        throw err;
+      }
     },
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
