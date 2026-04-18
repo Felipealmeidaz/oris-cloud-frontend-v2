@@ -94,18 +94,35 @@ export async function POST(req: NextRequest) {
     // Preparar payload da requisição
     const payload = {
       pin: pin.trim(),
-      name: `kcg-${userName}`
+      name: `oris-${userName}`
     };
 
-    // Fazer requisição para o Moonlight usando https nativo
-    logger.info('Conectando ao Moonlight', { publicIp: vmInfo.publicIp });
-    
+    // Validar credenciais do Sunshine antes de tentar conectar.
+    // Sunshine é o servidor de streaming rodando na VM EC2 (Windows) e exige
+    // basic auth por padrão do protocolo dele — não é auth do usuário Oris.
+    // Nunca aceitar credencial default em produção.
+    const sunshineUser = process.env.SUNSHINE_USER;
+    const sunshinePass = process.env.SUNSHINE_PASS;
+    if (!sunshineUser || !sunshinePass) {
+      logger.error('Credenciais Sunshine ausentes', {
+        hasUser: !!sunshineUser,
+        hasPass: !!sunshinePass,
+      });
+      return NextResponse.json(
+        { error: 'Serviço de streaming não configurado. Contate o suporte.' },
+        { status: 503 }
+      );
+    }
+
+    // Fazer requisição para o Sunshine usando https nativo
+    logger.info('Conectando ao Sunshine', { publicIp: vmInfo.publicIp });
+
     try {
       // Usar https nativo do Node.js para ter controle total sobre SSL
       const https = require('https');
-      
+
       const postData = JSON.stringify(payload);
-      
+
       const options = {
         hostname: vmInfo.publicIp,
         port: 47990,
@@ -114,9 +131,9 @@ export async function POST(req: NextRequest) {
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(postData),
-          'Authorization': 'Basic ' + Buffer.from(`${process.env.SUNSHINE_USER || 'oris'}:${process.env.SUNSHINE_PASS || 'oris'}`).toString('base64')
+          'Authorization': 'Basic ' + Buffer.from(`${sunshineUser}:${sunshinePass}`).toString('base64')
         },
-        rejectUnauthorized: false // Ignorar certificados auto-assinados
+        rejectUnauthorized: false // Ignorar certificados auto-assinados do Sunshine
       };
 
       const responseData = await new Promise<any>((resolve, reject) => {
@@ -149,28 +166,28 @@ export async function POST(req: NextRequest) {
         req.end();
       });
 
-      logger.info('Conexão Moonlight estabelecida', { diskName });
+      logger.info('Conexão Sunshine estabelecida', { diskName });
 
       return NextResponse.json({
         success: true,
-        message: 'Conectado ao Moonlight com sucesso',
+        message: 'PIN pareado com o Sunshine. Abra o Moonlight e conecte.',
         data: responseData.data
       });
 
     } catch (fetchError: any) {
-      logger.error('Erro ao conectar com Moonlight', { error: fetchError.message });
-      
+      logger.error('Erro ao parear com Sunshine', { error: fetchError.message });
+
       return NextResponse.json(
-        { error: `Erro ao conectar com Moonlight: ${fetchError.message}` },
+        { error: `Erro ao parear com Sunshine: ${fetchError.message}` },
         { status: 500 }
       );
     }
 
   } catch (error: any) {
-    logger.error('Erro ao conectar com Moonlight', { error: error.message });
-    
+    logger.error('Erro ao parear com Sunshine', { error: error.message });
+
     return NextResponse.json(
-      { error: error.message || 'Erro ao conectar com Moonlight' },
+      { error: error.message || 'Erro ao parear com Sunshine' },
       { status: 500 }
     );
   }

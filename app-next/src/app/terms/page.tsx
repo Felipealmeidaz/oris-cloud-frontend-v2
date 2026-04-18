@@ -36,13 +36,13 @@ export default function TermsOfService() {
                     <section>
                         <h2 className="text-2xl font-normal text-white mb-4">2. Descrição dos Serviços</h2>
                         <p className="leading-relaxed mb-3">
-                            A Oris Cloud oferece serviços de máquinas virtuais e físicas para cloud gaming. Nossos serviços incluem:
+                            A Oris Cloud oferece serviços de máquinas virtuais para cloud gaming em instâncias AWS EC2 dedicadas. Nossos serviços incluem:
                         </p>
                         <ul className="list-disc list-inside space-y-2 ml-4">
-                            <li>Acesso a máquinas virtuais com hardware de alta performance</li>
-                            <li>Acesso a máquinas físicas dedicadas</li>
-                            <li>Suporte técnico especializado</li>
-                            <li>Planos de assinatura com diferentes durações</li>
+                            <li>Acesso a máquinas virtuais com GPU NVIDIA Tesla T4 em AWS sa-east-1 (São Paulo)</li>
+                            <li>Streaming via Parsec ou Moonlight com baixa latência</li>
+                            <li>Suporte técnico via Discord</li>
+                            <li>Planos de assinatura com diferentes durações e vCPUs</li>
                         </ul>
                     </section>
 

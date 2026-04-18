@@ -40,17 +40,6 @@ export default function Footer() {
                   <span>Máquinas Virtuais</span>
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/discord"
-                  className="hover:text-gray-300 transition-colors inline-flex items-center space-x-1.5"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span>Máquinas Físicas</span>
-                  <ExternalLink className="h-4 w-4" />
-                </Link>
-              </li>
             </ul>
           </div>
 

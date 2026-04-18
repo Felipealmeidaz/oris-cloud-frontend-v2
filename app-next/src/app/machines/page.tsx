@@ -121,70 +121,6 @@ export default function Machines() {
                         </div>
                     </Card>
 
-                    {/* Fisicas */}
-                    <Card className="card-hover-effect relative border-gray-800 bg-transparent text-white transition-all duration-300 hover:border-gray-600">
-                        <div className="flex flex-col md:flex-row">
-                            <div className="md:w-1/3 p-6">
-                                <CardHeader className="p-0">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <Server className="h-5 w-5" />
-                                        <h2 className="text-lg">Máquinas Físicas</h2>
-                                    </div>
-                                    <p className="text-sm text-gray-400">
-                                        Mais de 4 configurações disponíveis, podendo ser escolhidas por você de acordo com o estoque.
-                                    </p>
-                                </CardHeader>
-                            </div>
-                            <div className="md:w-1/2 p-6 flex items-center">
-                                <CardContent className="p-0 w-full">
-                                    <ul className="grid gap-3">
-                                        <li className="flex items-center gap-3">
-                                            <Cpu className="flex-shrink-0 h-5 w-5 text-gray-350" />
-                                            <span className="text-sm">CPU: Intel Xeon E5-2696V4 (22 Cores)</span>
-                                        </li>
-                                        <li className="flex items-center gap-3">
-                                            <MemoryStick className="flex-shrink-0 h-5 w-5 text-gray-350" />
-                                            <span className="text-sm">RAM: 12GB (DDR4)</span>
-                                        </li>
-                                        <li className="flex items-center gap-3">
-                                            <HardDrive className="flex-shrink-0 h-5 w-5 text-gray-350" />
-                                            <span className="text-sm">Disco: 1x 512GB (SSD)</span>
-                                        </li>
-                                        <li className="flex items-center gap-3">
-                                            <Microchip className="flex-shrink-0 h-5 w-5 text-gray-350" />
-                                            <span className="text-sm">GPUs: RX 6600 XT, RTX 2060 8GB, RTX 3060 12GB ou RTX 5060 8GB</span>
-                                        </li>
-                                                                                <li className="flex items-center gap-3">
-                                            <MonitorCheck className="flex-shrink-0 h-5 w-5 text-gray-350" />
-                                            <span className="text-sm">SO: Windows 11 Pro (BYOL)</span>
-                                        </li>
-                                    </ul>
-                                </CardContent>
-                            </div>
-                            <div className="md:w-1/6 p-6 flex items-center justify-center">
-                                <CardFooter className="p-0 w-full">
-                                    <Link className="w-full" href="/discord" target="_blank" rel="noopener noreferrer">
-                                        <Button className="relative z-10 w-full h-11 bg-gray-100 hover:bg-gray-300">
-                                            <span>Adquirir</span>
-                                            <ExternalLink className="h-4 w-4" />
-                                        </Button>
-                                    </Link>
-                                </CardFooter>
-                            </div>
-                        </div>
-                        {/* Observações - Físicas */}
-                        <div className="px-6 pb-6">
-                            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
-                                <div className="flex items-start gap-2">
-                                    <Info className="flex-shrink-0 h-4 w-4 text-blue-400 mt-0.5" />
-                                    <p className="text-xs text-blue-200">
-                                        <span className="font-semibold">Observações:</span> Pode ocorrer filas, vagas limitadas. Máquinas virtualizadas via KVM. Não possuem spot. Manutenções mensais.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </Card>
-
                 </div>
             </section>
 
@@ -202,7 +138,7 @@ export default function Machines() {
                             Conheça as vantagens das nossas máquinas
                         </h3>
                         <p className="text-gray-400 mx-auto">
-                            A Oris oferece máquinas físicas e virtuais de alta performance para elevar sua experiência de jogo. Confira abaixo as principais vantagens de nossas soluções.
+                            A Oris oferece máquinas virtuais dedicadas em AWS EC2 com GPU NVIDIA Tesla T4 para elevar sua experiência de jogo. Confira abaixo as principais vantagens.
                         </p>
                     </div>
 

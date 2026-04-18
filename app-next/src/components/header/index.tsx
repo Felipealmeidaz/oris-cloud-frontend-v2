@@ -77,37 +77,13 @@ export default function Header() {
                                 </Link>
                             </NavigationMenuItem>
 
-                            {/* Máquinas */}
+                            {/* Máquinas - link direto (não temos mais 'Máquinas Físicas') */}
                             <NavigationMenuItem>
-                                <NavigationMenuTrigger className="text-white bg-transparent hover:bg-zinc-800 focus:bg-zinc-800">
-                                    Máquinas
-                                </NavigationMenuTrigger>
-                                <NavigationMenuContent>
-                                    <div className="grid grid-cols-2 gap-4 p-2 w-[600px] bg-[rgba(7,8,12,255)]">
-                                        <Link href="/machines"
-                                            className="group grid gap-1 hover:bg-[#15161cdd] p-2 rounded-lg transition-colors">
-                                            <div className="flex items-center gap-2">
-                                                <Cloud className="w-5 h-5" />
-                                                <h3 className="font-medium">Máquinas Virtuais</h3>
-                                            </div>
-                                            <p className="text-sm text-zinc-400">
-                                                Desempenho escalável e flexível para suas necessidades de computação em nuvem.
-                                            </p>
-                                        </Link>
-
-                                        <Link href="/discord"
-                                            className="group grid gap-1 hover:bg-[#15161cdd] p-2 rounded-lg transition-colors"
-                                            target="_blank" rel="noopener noreferrer">
-                                            <div className="flex items-center gap-2">
-                                                <Server className="w-5 h-5" />
-                                                <h3 className="font-medium">Máquinas Físicas</h3>
-                                            </div>
-                                            <p className="text-sm text-zinc-400">
-                                                Desempenho dedicado e consistente com maior controle sobre o hardware.
-                                            </p>
-                                        </Link>
-                                    </div>
-                                </NavigationMenuContent>
+                                <Link href="/machines">
+                                    <NavigationMenuLink className={`${navigationMenuTriggerStyle()} bg-transparent`}>
+                                        Máquinas
+                                    </NavigationMenuLink>
+                                </Link>
                             </NavigationMenuItem>
 
                             {/* Downloads */}
