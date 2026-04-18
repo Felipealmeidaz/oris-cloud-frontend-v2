@@ -7,62 +7,65 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// Usuario da Oris Cloud. Gerenciado 100 por cento pelo better-auth.
+/// As colunas no banco usam snake_case (padrao better-auth migrations),
+/// entao mapeamos camelCase do Prisma Client para snake_case do Postgres.
 model user {
   id            String    @id
-  name          String    @unique
+  name          String
   email         String    @unique
-  emailVerified Boolean
+  emailVerified Boolean   @default(false) @map("email_verified")
   image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
   session       session[]
   account       account[]
 }
 
+/// Sessao ativa do usuario (cookie httpOnly gerenciado pelo better-auth).
 model session {
   id        String   @id
-  expiresAt DateTime
+  expiresAt DateTime @map("expires_at")
   token     String   @unique
-  createdAt DateTime
-  updatedAt DateTime
-  ipAddress String?
-  userAgent String?
-  userId    String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  userId    String   @map("user_id")
   user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
 }
 
+/// Account liga um provider de autenticacao (email, Google, etc) ao user.
+/// Para email+senha local, password e armazenado com hash bcrypt pelo better-auth.
+/// Para OAuth, guarda access_token, refresh_token, id_token e os respectivos expires_at.
 model account {
-  id                String    @id
-  accountId         String
-  providerId        String
-  userId            String
-  accessToken       String?
-  refreshToken      String?
-  idToken           String?
-  expiresAt         DateTime?
-  password          String?
-  createdAt         DateTime
-  updatedAt         DateTime
-  user              user      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
+  id                    String    @id
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  userId                String    @map("user_id")
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @default(now()) @updatedAt @map("updated_at")
+  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-/// Modelo nativo do better-auth para armazenar tokens de verificação
+/// Modelo nativo do better-auth para armazenar tokens de verificacao
 /// de email e reset de senha. Substituiu o modelo custom EmailVerification
-/// (que armazenava códigos OTP) quando migramos pro fluxo de link mágico.
+/// (que armazenava codigos OTP) quando migramos pro fluxo de link magico.
 /// Ver src/lib/auth.ts para os callbacks que geram estes registros.
 model verification {
   id         String   @id
   identifier String
   value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([identifier])
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
 }
 
 model Plan {
