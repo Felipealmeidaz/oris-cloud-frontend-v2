@@ -64,7 +64,16 @@ export function LoginButton({ provider, className }: LoginButtonProps) {
         throw new Error('Backend did not return OAuth URL');
       }
 
-      window.location.href = data.url;
+      // Se a URL de login incluir ?reauth=1 (fluxo "Trocar de conta"),
+      // força o Google a mostrar a tela de seleção de conta.
+      const isReauth = new URLSearchParams(window.location.search).get('reauth') === '1';
+      let finalUrl = data.url;
+      if (isReauth && provider === 'google') {
+        const separator = finalUrl.includes('?') ? '&' : '?';
+        finalUrl = `${finalUrl}${separator}prompt=select_account`;
+      }
+
+      window.location.href = finalUrl;
     } catch (err) {
       console.error(`Failed to sign in with ${provider}:`, err);
       setLoading(false);

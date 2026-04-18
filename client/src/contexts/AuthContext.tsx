@@ -3,6 +3,7 @@ import { useSession, signOut } from '@/lib/auth-client';
 
 interface AuthContextType {
   user: any | null;
+  sessionToken: string | null;
   isLoading: boolean;
   isLoggedIn: boolean;
   logout: () => Promise<void>;
@@ -20,6 +21,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const value: AuthContextType = {
     user: session?.user || null,
+    sessionToken: (session as any)?.session?.token || null,
     isLoading,
     isLoggedIn: !!session?.user,
     logout: handleLogout,
