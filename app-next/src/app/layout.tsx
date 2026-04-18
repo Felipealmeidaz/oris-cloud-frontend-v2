@@ -7,15 +7,16 @@ import { usePathname } from 'next/navigation';
 import Header from "@/components/header/index";
 import Footer from "@/components/footer/index";
 import { Toaster } from "@/components/ui/toaster"
+import { spaceGrotesk, inter, jetbrainsMono } from "./fonts";
 
 const metadata = {
   title: "Oris Cloud",
   description: "Oris Cloud é uma plataforma de cloud gaming brasileira que disponibiliza instâncias EC2 dedicadas na AWS São Paulo com GPU NVIDIA Tesla T4. Jogue via Parsec ou Moonlight de qualquer dispositivo.",
-  icon: "/oris-icon.png",
+  icon: "/oris-icon.svg",
   icons: {
-    icon: "/oris-icon.png",
-    shortcut: "/oris-icon.png",
-    apple: "/oris-icon.png"
+    icon: "/oris-icon.svg",
+    shortcut: "/oris-icon.svg",
+    apple: "/oris-icon.svg"
   },
 };
 
@@ -51,7 +52,9 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href={metadata.icons.apple} />
       </head>
 
-      <body className={`antialiased overflow-x-hidden`}>
+      <body
+        className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} font-sans antialiased overflow-x-hidden`}
+      >
         <div className="min-h-screen w-screen bg-[rgb(9,9,11)] text-white">
           <Header />
           <main>{children}</main>

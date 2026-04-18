@@ -1,7 +1,6 @@
 'use client';
 
 import Link from "next/link";
-import Image from "next/image";
 import { Suspense } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -16,68 +15,70 @@ import { MonitorCheck } from "lucide-react";
 
 import WorldMap from "@/components/ui/world-map";
 import { FeaturesSectionDemo } from "@/components/ui/features";
-import { TypingAnimation } from "@/components/ui/typing-animation";
-import { AnimatedGradientTextDemo } from "@/components/ui/TextDemo";
 
 export default function Home() {
   return (
     <div className="min-h-screen w-screen text-white bg-[rgb(9,9,11)]">
 
-      {/* Main Section */}
-      <section className="relative px-6 md:px-11 mt-36 md:mt-48">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
-            
-            {/* Left Side - Content */}
-            <div className="w-full lg:w-1/2 text-center lg:text-left">
-              <div className="mb-4 flex justify-center lg:justify-start">
-                <AnimatedGradientTextDemo />
-              </div>
-              <div className="mb-4">
-                <h1 className="text-3xl font-normal tracking-wide text-white sm:text-4xl md:text-5xl lg:text-6xl">
-                  Seu PC gamer na nuvem.{" "}
-                  <span className="inline-block min-w-[280px] sm:min-w-[350px] md:min-w-[450px] lg:min-w-[550px] align-bottom">
-                    <TypingAnimation
-                      words={[
-                        "No celular.",
-                        "No computador.",
-                        "No notebook.",
-                        "Na TV.",
-                        "Em qualquer lugar."
-                      ]}
-                      className="text-3xl font-normal tracking-wide bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent sm:text-4xl md:text-5xl lg:text-6xl"
-                      typeSpeed={100}
-                      deleteSpeed={50}
-                      pauseDelay={2000}
-                      loop={true}
-                    />
-                  </span>
-                </h1>
-              </div>
-              <p className="mx-auto lg:mx-0 mb-8 max-w-xl text-base text-gray-400 sm:text-lg md:text-xl">
-                Máquinas virtuais com GPUs NVIDIA de última geração. Sem downloads, sem instalações. Conecte e jogue instantaneamente.
-              </p>
-              <Link href="/order">
-                <Button size="lg" variant="default" className="px-6 sm:px-8">
-                  Começar agora
-                </Button>
-              </Link>
-            </div>
+      {/* Hero - text-only, factual, sem mascote */}
+      <section className="relative px-6 md:px-11 pt-40 md:pt-56 pb-20 md:pb-32 overflow-hidden">
+        {/* Glow sutil de fundo */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10"
+        >
+          <div className="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-white/[0.03] blur-3xl" />
+        </div>
 
-            {/* Right Side - Image */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center">
-              <div className="relative w-full max-w-md lg:max-w-lg">
-                <Image
-                  src="/images/oris-hero.png"
-                  alt="Oris Cloud"
-                  width={600}
-                  height={600}
-                  className="object-contain"
-                  priority
-                />
-              </div>
-            </div>
+        <div className="mx-auto max-w-5xl text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 mb-8 px-3.5 py-1.5 rounded-full border border-white/15 bg-white/[0.03] backdrop-blur-sm text-xs font-medium text-white/80">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400/80 animate-ping" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            </span>
+            <span>Powered by</span>
+            <span className="font-semibold text-white">AWS</span>
+            <span className="text-white/40">·</span>
+            <span className="font-semibold text-white">NVIDIA Tesla T4</span>
+          </div>
 
+          {/* H1 factual, sem typing animation */}
+          <h1 className="font-display text-5xl md:text-6xl lg:text-[4.5rem] font-bold tracking-tight leading-[1.02] mb-6 text-white">
+            Cloud gaming
+            <br />
+            com hardware AWS.
+          </h1>
+
+          {/* Subline factual com especs reais */}
+          <p className="mx-auto max-w-2xl text-base md:text-lg text-white/65 mb-9 leading-relaxed">
+            VMs dedicadas com GPU{" "}
+            <span className="text-white font-medium">NVIDIA Tesla T4</span>{" "}
+            rodando em São Paulo. Você conecta pelo Parsec ou Moonlight e joga
+            do notebook, celular ou TV.
+          </p>
+
+          {/* CTA */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link href="/order">
+              <Button size="lg" variant="default" className="px-8 font-medium">
+                Começar agora
+              </Button>
+            </Link>
+            <Link href="/machines">
+              <Button size="lg" variant="ghost" className="px-8 font-medium text-white/80 hover:text-white">
+                Ver máquinas
+              </Button>
+            </Link>
+          </div>
+
+          {/* Tech label abaixo do CTA */}
+          <div className="mt-10 inline-flex items-center gap-3 font-mono text-[11px] text-white/40 uppercase tracking-[0.2em]">
+            <span>g4dn.xlarge</span>
+            <span className="text-white/20">·</span>
+            <span>sa-east-1</span>
+            <span className="text-white/20">·</span>
+            <span>16GB VRAM</span>
           </div>
         </div>
       </section>

@@ -1,17 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
 @import "tailwindcss";
-
-/* Fonte global */
-* {
-  font-family: 'Poppins', sans-serif;
-  letter-spacing: 0.5px;
-}
 
 /* ------------------------------ */
 /*     DESIGN TOKENS (TAILWIND 4) */
 /* ------------------------------ */
 
 @theme {
+  /* Fontes Oris: carregadas via next/font em src/app/fonts.ts */
+  --font-sans: var(--font-sans, "Inter", system-ui, sans-serif);
+  --font-display: var(--font-display, "Space Grotesk", system-ui, sans-serif);
+  --font-mono: var(--font-mono, "JetBrains Mono", ui-monospace, monospace);
+
   --color-background: 240 10% 3.9%;
   --color-foreground: 0 0% 98%;
   --color-card: 240 10% 3.9%;

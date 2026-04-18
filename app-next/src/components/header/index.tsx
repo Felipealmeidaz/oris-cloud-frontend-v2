@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { useSession } from "@/lib/auth-client";
+import { OrisLogo } from "@/components/ui/oris-logo";
 
 // Resizable Navbar Components
 import {
@@ -58,17 +59,9 @@ export default function Header() {
                 {/* Logo */}
                 <Link
                     href="/"
-                    className="relative z-20 flex items-center space-x-2 hover:opacity-80 transition-opacity"
+                    className="relative z-20 flex items-center hover:opacity-80 transition-opacity text-white"
                 >
-                    <div className="w-[50px] h-[50px] relative">
-                        <Image
-                            src="/oris-icon.png"
-                            alt="Oris Icon"
-                            width={50}
-                            height={50}
-                            className="object-contain"
-                        />
-                    </div>
+                    <OrisLogo size={32} withWordmark />
                 </Link>
 
                 {/* Navigation Items */}
@@ -188,17 +181,9 @@ export default function Header() {
                     {/* Logo */}
                     <Link
                         href="/"
-                        className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+                        className="flex items-center hover:opacity-80 transition-opacity text-white"
                     >
-                        <div className="w-[50px] h-[50px] relative">
-                            <Image
-                                src="/oris-icon.png"
-                                alt="Oris Icon"
-                                width={50}
-                                height={50}
-                                className="object-contain"
-                            />
-                        </div>
+                        <OrisLogo size={28} withWordmark />
                     </Link>
 
                     {/* Right Side: User + Menu Toggle */}
