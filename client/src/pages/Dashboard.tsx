@@ -5,21 +5,11 @@ import {
   LogOut,
   Settings,
   CreditCard,
-  History,
   User,
   Zap,
   Clock,
   TrendingUp,
-  ChevronRight,
-  Bell,
   Shield,
-  Download,
-  MoreVertical,
-  Home,
-  Info,
-  Tag,
-  HelpCircle,
-  X,
 } from 'lucide-react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Header from '@/components/Header';
@@ -32,40 +22,50 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
+type InternalTab = 'overview' | 'purchases' | 'sessions' | 'settings';
+
+const VALID_TABS: readonly InternalTab[] = [
+  'overview',
+  'purchases',
+  'sessions',
+  'settings',
+] as const;
+
+function isValidTab(value: string): value is InternalTab {
+  return (VALID_TABS as readonly string[]).includes(value);
+}
+
 /**
- * Dashboard com navegação real entre abas (Início, Sobre, Planos, FAQ)
- * Sincronizado com hash da URL (#home, #about, #plans, #faq)
- * Dados reais do usuário (sem mocks) e "Seu Plano Atual" em modal flutuante
+ * Dashboard privado — só acessível autenticado.
+ * Abas internas (Visão Geral, Histórico, Sessões, Configurações) sincronizadas
+ * com o hash da URL (#overview, #purchases, #sessions, #settings).
  */
 export function Dashboard() {
   const [, navigate] = useLocation();
   const { user, isLoading, isLoggedIn, logout } = useAuthContext();
-  const [activeMainTab, setActiveMainTab] = useState('home');
-  const [activeInternalTab, setActiveInternalTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState<InternalTab>('overview');
   const [showPlanModal, setShowPlanModal] = useState(false);
 
-  // Sincronizar com hash da URL
+  // Sincroniza aba ativa com hash da URL (permite deep-link /dashboard#settings)
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.slice(1) || 'home';
-      const validTabs = ['home', 'about', 'plans', 'faq'];
-      if (validTabs.includes(hash)) {
-        setActiveMainTab(hash);
+    const syncFromHash = () => {
+      const hash = window.location.hash.slice(1);
+      if (isValidTab(hash)) {
+        setActiveTab(hash);
       }
     };
 
-    handleHashChange();
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    syncFromHash();
+    window.addEventListener('hashchange', syncFromHash);
+    return () => window.removeEventListener('hashchange', syncFromHash);
   }, []);
 
-  // Mudar hash quando aba principal muda
-  const handleMainTabChange = (tabId: string) => {
-    setActiveMainTab(tabId);
+  const handleTabChange = (tabId: InternalTab) => {
+    setActiveTab(tabId);
     window.location.hash = tabId;
   };
 
-  // Proteção de rota: se não logado, manda pra /login
+  // Proteção de rota: não logado → /login
   useEffect(() => {
     if (!isLoading && !isLoggedIn) {
       navigate('/login');
@@ -115,16 +115,7 @@ export function Dashboard() {
     },
   };
 
-  // Abas principais de navegação
-  const mainTabs = [
-    { id: 'home', label: 'Início', icon: Home },
-    { id: 'about', label: 'Sobre', icon: Info },
-    { id: 'plans', label: 'Planos', icon: Tag },
-    { id: 'faq', label: 'FAQ', icon: HelpCircle },
-  ];
-
-  // Abas internas do dashboard
-  const internalTabs = [
+  const tabs: Array<{ id: InternalTab; label: string; icon: typeof TrendingUp }> = [
     { id: 'overview', label: 'Visão Geral', icon: TrendingUp },
     { id: 'purchases', label: 'Histórico de Compras', icon: CreditCard },
     { id: 'sessions', label: 'Sessões Ativas', icon: Clock },
@@ -142,7 +133,7 @@ export function Dashboard() {
           animate="visible"
           className="max-w-6xl mx-auto"
         >
-          {/* Header do Dashboard */}
+          {/* Header do Dashboard — perfil do usuário */}
           <motion.div variants={itemVariants} className="mb-12">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
               <div className="flex items-center gap-6">
@@ -175,7 +166,7 @@ export function Dashboard() {
                   variant="outline"
                   size="lg"
                   className="gap-2"
-                  onClick={() => setActiveInternalTab('settings')}
+                  onClick={() => handleTabChange('settings')}
                 >
                   <Settings size={18} />
                   Configurações
@@ -193,16 +184,19 @@ export function Dashboard() {
             </div>
           </motion.div>
 
-          {/* Abas Principais de Navegação */}
-          <motion.div variants={itemVariants} className="flex gap-2 mb-8 border-b border-white/10">
-            {mainTabs.map((tab) => {
+          {/* Abas internas do dashboard */}
+          <motion.div
+            variants={itemVariants}
+            className="flex gap-2 mb-8 border-b border-white/10 overflow-x-auto"
+          >
+            {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
-                  onClick={() => handleMainTabChange(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 ${
-                    activeMainTab === tab.id
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 whitespace-nowrap ${
+                    activeTab === tab.id
                       ? 'border-cyan-500 text-white'
                       : 'border-transparent text-foreground/60 hover:text-white'
                   }`}
@@ -214,373 +208,229 @@ export function Dashboard() {
             })}
           </motion.div>
 
-          {/* Conteúdo das Abas Principais */}
-
-          {/* Aba: Início */}
-          {activeMainTab === 'home' && (
+          {/* Aba: Visão Geral */}
+          {activeTab === 'overview' && (
             <motion.div
               variants={containerVariants}
               initial="hidden"
               animate="visible"
               className="space-y-6"
             >
-              {/* Abas Internas */}
-              <motion.div variants={itemVariants} className="flex gap-2 mb-8 border-b border-white/10">
-                {internalTabs.map((tab) => {
-                  const Icon = tab.icon;
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  {
+                    label: 'Plano Ativo',
+                    value: 'Sem plano',
+                    icon: Zap,
+                    color: 'from-cyan-500 to-blue-600',
+                  },
+                  {
+                    label: 'Próximo Pagamento',
+                    value: 'N/A',
+                    icon: Clock,
+                    color: 'from-green-500 to-emerald-600',
+                  },
+                  {
+                    label: 'Horas Usadas',
+                    value: '0h',
+                    icon: Clock,
+                    color: 'from-purple-500 to-pink-600',
+                  },
+                ].map((stat, idx) => {
+                  const Icon = stat.icon;
                   return (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveInternalTab(tab.id)}
-                      className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 ${
-                        activeInternalTab === tab.id
-                          ? 'border-cyan-500 text-white'
-                          : 'border-transparent text-foreground/60 hover:text-white'
-                      }`}
+                    <motion.div
+                      key={idx}
+                      variants={itemVariants}
+                      className={`rounded-xl bg-gradient-to-br ${stat.color} p-6 text-white`}
                     >
-                      <Icon size={16} />
-                      {tab.label}
-                    </button>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm opacity-80 mb-1">{stat.label}</p>
+                          <p className="text-3xl font-bold">{stat.value}</p>
+                        </div>
+                        <Icon size={32} className="opacity-50" />
+                      </div>
+                    </motion.div>
                   );
                 })}
+              </div>
+
+              <motion.div variants={itemVariants}>
+                <Button
+                  onClick={() => setShowPlanModal(true)}
+                  className="w-full gap-2 py-6"
+                >
+                  <Zap size={18} />
+                  Ver Seu Plano Atual
+                </Button>
               </motion.div>
 
-              {/* Overview Tab */}
-              {activeInternalTab === 'overview' && (
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="space-y-6"
-                >
-                  {/* Stats Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {[
-                      {
-                        label: 'Plano Ativo',
-                        value: 'Sem plano',
-                        icon: Zap,
-                        color: 'from-cyan-500 to-blue-600',
-                      },
-                      {
-                        label: 'Próximo Pagamento',
-                        value: 'N/A',
-                        icon: Clock,
-                        color: 'from-green-500 to-emerald-600',
-                      },
-                      {
-                        label: 'Horas Usadas',
-                        value: '0h',
-                        icon: Clock,
-                        color: 'from-purple-500 to-pink-600',
-                      },
-                    ].map((stat, idx) => {
-                      const Icon = stat.icon;
-                      return (
-                        <motion.div
-                          key={idx}
-                          variants={itemVariants}
-                          className={`rounded-xl bg-gradient-to-br ${stat.color} p-6 text-white`}
+              <Dialog open={showPlanModal} onOpenChange={setShowPlanModal}>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl">Seu Plano Atual</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-6 py-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div>
+                        <p className="text-foreground/60 mb-2">Status</p>
+                        <p className="text-3xl font-bold text-white mb-4">Sem plano ativo</p>
+                        <p className="text-foreground/60 mb-6">Escolha um plano para começar</p>
+                        <Button
+                          className="w-full gap-2"
+                          onClick={() => {
+                            setShowPlanModal(false);
+                            navigate('/#plans');
+                          }}
                         >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm opacity-80 mb-1">{stat.label}</p>
-                              <p className="text-3xl font-bold">{stat.value}</p>
-                            </div>
-                            <Icon size={32} className="opacity-50" />
-                          </div>
-                        </motion.div>
-                      );
-                    })}
+                          <Zap size={18} />
+                          Escolher Plano
+                        </Button>
+                      </div>
+                      <div className="space-y-3">
+                        <p className="text-sm text-foreground/60 uppercase tracking-widest">
+                          Recursos disponíveis
+                        </p>
+                        {[
+                          'Acesso a plataforma',
+                          'Suporte por email',
+                          'Documentação completa',
+                          'Comunidade Discord',
+                        ].map((feature, idx) => (
+                          <p key={idx} className="text-foreground/80">
+                            ✓ {feature}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-
-                  {/* Botão para abrir modal "Seu Plano Atual" */}
-                  <motion.div variants={itemVariants}>
-                    <Button
-                      onClick={() => setShowPlanModal(true)}
-                      className="w-full gap-2 py-6"
-                    >
-                      <Zap size={18} />
-                      Ver Seu Plano Atual
-                    </Button>
-                  </motion.div>
-
-                  {/* Modal "Seu Plano Atual" */}
-                  <Dialog open={showPlanModal} onOpenChange={setShowPlanModal}>
-                    <DialogContent className="max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle className="text-2xl">Seu Plano Atual</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-6 py-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          <div>
-                            <p className="text-foreground/60 mb-2">Status</p>
-                            <p className="text-3xl font-bold text-white mb-4">Sem plano ativo</p>
-                            <p className="text-foreground/60 mb-6">Escolha um plano para começar</p>
-                            <Button className="w-full gap-2">
-                              <Zap size={18} />
-                              Escolher Plano
-                            </Button>
-                          </div>
-                          <div className="space-y-3">
-                            <p className="text-sm text-foreground/60 uppercase tracking-widest">
-                              Recursos disponíveis
-                            </p>
-                            {[
-                              'Acesso a plataforma',
-                              'Suporte por email',
-                              'Documentação completa',
-                              'Comunidade Discord',
-                            ].map((feature, idx) => (
-                              <p key={idx} className="text-foreground/80">
-                                ✓ {feature}
-                              </p>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </motion.div>
-              )}
-
-              {/* Purchases Tab */}
-              {activeInternalTab === 'purchases' && (
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="space-y-4"
-                >
-                  <h3 className="text-xl font-bold text-white mb-6">Histórico de Compras</h3>
-                  <motion.div
-                    variants={itemVariants}
-                    className="rounded-lg border border-white/10 bg-white/[0.02] p-8 text-center"
-                  >
-                    <p className="text-foreground/60">Nenhuma compra registrada ainda</p>
-                    <p className="text-sm text-foreground/40 mt-2">
-                      Escolha um plano para começar sua jornada na Oris Cloud
-                    </p>
-                  </motion.div>
-                </motion.div>
-              )}
-
-              {/* Sessions Tab */}
-              {activeInternalTab === 'sessions' && (
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="space-y-4"
-                >
-                  <h3 className="text-xl font-bold text-white mb-6">Sessões Ativas</h3>
-                  <motion.div
-                    variants={itemVariants}
-                    className="rounded-lg border border-white/10 bg-white/[0.02] p-8 text-center"
-                  >
-                    <p className="text-foreground/60">Nenhuma sessão ativa no momento</p>
-                    <p className="text-sm text-foreground/40 mt-2">
-                      Suas sessões aparecerão aqui quando você ativar um plano
-                    </p>
-                  </motion.div>
-                </motion.div>
-              )}
-
-              {/* Settings Tab */}
-              {activeInternalTab === 'settings' && (
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="space-y-6"
-                >
-                  <h3 className="text-xl font-bold text-white mb-6">Configurações</h3>
-
-                  {/* Perfil */}
-                  <motion.div
-                    variants={itemVariants}
-                    className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-xl p-8"
-                  >
-                    <h4 className="text-lg font-semibold text-white mb-4">Perfil</h4>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm text-foreground/60 mb-2">Nome</label>
-                        <input
-                          type="text"
-                          value={displayName}
-                          disabled
-                          className="w-full px-4 py-2 rounded-lg border border-white/10 bg-white/5 text-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-foreground/60 mb-2">Email</label>
-                        <input
-                          type="email"
-                          value={user?.email || ''}
-                          disabled
-                          className="w-full px-4 py-2 rounded-lg border border-white/10 bg-white/5 text-white"
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  {/* Notificações */}
-                  <motion.div
-                    variants={itemVariants}
-                    className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-xl p-8"
-                  >
-                    <h4 className="text-lg font-semibold text-white mb-4">Notificações</h4>
-                    <div className="space-y-3">
-                      {[
-                        { label: 'Notificações de pagamento', enabled: true },
-                        { label: 'Atualizações de plano', enabled: true },
-                        { label: 'Alertas de segurança', enabled: true },
-                      ].map((notif, idx) => (
-                        <label key={idx} className="flex items-center gap-3 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            defaultChecked={notif.enabled}
-                            className="w-4 h-4 rounded"
-                          />
-                          <span className="text-foreground/80">{notif.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </motion.div>
-
-                  {/* Segurança */}
-                  <motion.div
-                    variants={itemVariants}
-                    className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-xl p-8"
-                  >
-                    <h4 className="text-lg font-semibold text-white mb-4">Segurança</h4>
-                    <Button variant="outline" className="gap-2">
-                      <Shield size={18} />
-                      Alterar Senha
-                    </Button>
-                  </motion.div>
-                </motion.div>
-              )}
+                </DialogContent>
+              </Dialog>
             </motion.div>
           )}
 
-          {/* Aba: Sobre */}
-          {activeMainTab === 'about' && (
+          {/* Aba: Histórico de Compras */}
+          {activeTab === 'purchases' && (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="space-y-4"
+            >
+              <h3 className="text-xl font-bold text-white mb-6">Histórico de Compras</h3>
+              <motion.div
+                variants={itemVariants}
+                className="rounded-lg border border-white/10 bg-white/[0.02] p-8 text-center"
+              >
+                <p className="text-foreground/60">Nenhuma compra registrada ainda</p>
+                <p className="text-sm text-foreground/40 mt-2">
+                  Escolha um plano para começar sua jornada na Oris Cloud
+                </p>
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Aba: Sessões Ativas */}
+          {activeTab === 'sessions' && (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="space-y-4"
+            >
+              <h3 className="text-xl font-bold text-white mb-6">Sessões Ativas</h3>
+              <motion.div
+                variants={itemVariants}
+                className="rounded-lg border border-white/10 bg-white/[0.02] p-8 text-center"
+              >
+                <p className="text-foreground/60">Nenhuma sessão ativa no momento</p>
+                <p className="text-sm text-foreground/40 mt-2">
+                  Suas sessões aparecerão aqui quando você ativar um plano
+                </p>
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Aba: Configurações */}
+          {activeTab === 'settings' && (
             <motion.div
               variants={containerVariants}
               initial="hidden"
               animate="visible"
               className="space-y-6"
             >
+              <h3 className="text-xl font-bold text-white mb-6">Configurações</h3>
+
+              {/* Perfil */}
               <motion.div
                 variants={itemVariants}
                 className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-xl p-8"
               >
-                <h2 className="text-3xl font-bold text-white mb-4">Sobre a Oris Cloud</h2>
-                <p className="text-foreground/80 leading-relaxed mb-6">
-                  Oris Cloud é uma plataforma brasileira de cloud gaming que democratiza o acesso a jogos de alta qualidade.
-                  Acreditamos que todo jogador merece a melhor experiência, independentemente do hardware que possui.
-                </p>
-                <h3 className="text-xl font-semibold text-white mb-3">Nossa Missão</h3>
-                <p className="text-foreground/80 leading-relaxed">
-                  Oferecer acesso a jogos de alta performance sem a necessidade de investimento em hardware caro.
-                  Queremos que todos possam jogar seus títulos favoritos com a melhor qualidade possível.
-                </p>
+                <div className="flex items-center gap-2 mb-4">
+                  <User size={20} className="text-cyan-400" />
+                  <h4 className="text-lg font-semibold text-white">Perfil</h4>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm text-foreground/60 mb-2">Nome</label>
+                    <input
+                      type="text"
+                      value={displayName}
+                      disabled
+                      className="w-full px-4 py-2 rounded-lg border border-white/10 bg-white/5 text-white disabled:opacity-70"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-foreground/60 mb-2">Email</label>
+                    <input
+                      type="email"
+                      value={user?.email || ''}
+                      disabled
+                      className="w-full px-4 py-2 rounded-lg border border-white/10 bg-white/5 text-white disabled:opacity-70"
+                    />
+                  </div>
+                </div>
               </motion.div>
-            </motion.div>
-          )}
 
-          {/* Aba: Planos */}
-          {activeMainTab === 'plans' && (
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="space-y-6"
-            >
-              <h2 className="text-3xl font-bold text-white mb-6">Nossos Planos</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[
-                  {
-                    name: 'Básico',
-                    price: 'R$ 29,90',
-                    features: ['Até 4 vCPUs', '16GB RAM', '256GB SSD', 'Resolução até 1080p'],
-                  },
-                  {
-                    name: 'Pro',
-                    price: 'R$ 69,90',
-                    features: ['Até 8 vCPUs', '28GB RAM', '512GB SSD', 'Resolução até 1440p'],
-                    highlighted: true,
-                  },
-                  {
-                    name: 'Ultra',
-                    price: 'R$ 129,90',
-                    features: ['Até 16 vCPUs', '56GB RAM', '1TB SSD', 'Resolução 4K'],
-                  },
-                ].map((plan, idx) => (
-                  <motion.div
-                    key={idx}
-                    variants={itemVariants}
-                    className={`rounded-xl border p-8 ${
-                      plan.highlighted
-                        ? 'border-cyan-500/50 bg-gradient-to-br from-cyan-500/10 to-blue-500/5'
-                        : 'border-white/10 bg-white/[0.02]'
-                    }`}
-                  >
-                    <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
-                    <p className="text-3xl font-bold text-cyan-400 mb-6">{plan.price}</p>
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, fidx) => (
-                        <li key={fidx} className="flex items-center gap-2 text-foreground/80">
-                          <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button className="w-full">Escolher Plano</Button>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )}
+              {/* Notificações */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-xl p-8"
+              >
+                <h4 className="text-lg font-semibold text-white mb-4">Notificações</h4>
+                <div className="space-y-3">
+                  {[
+                    { label: 'Notificações de pagamento', enabled: true },
+                    { label: 'Atualizações de plano', enabled: true },
+                    { label: 'Alertas de segurança', enabled: true },
+                  ].map((notif, idx) => (
+                    <label key={idx} className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        defaultChecked={notif.enabled}
+                        className="w-4 h-4 rounded"
+                      />
+                      <span className="text-foreground/80">{notif.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </motion.div>
 
-          {/* Aba: FAQ */}
-          {activeMainTab === 'faq' && (
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="space-y-6"
-            >
-              <h2 className="text-3xl font-bold text-white mb-6">Perguntas Frequentes</h2>
-              <div className="space-y-4">
-                {[
-                  {
-                    question: 'Como funciona o cloud gaming na Oris?',
-                    answer:
-                      'Você traz seus próprios jogos. Nós criamos um snapshot AWS da sua máquina virtual com full stock, permitindo que você tenha controle total.',
-                  },
-                  {
-                    question: 'Que internet eu preciso?',
-                    answer:
-                      'Recomendamos uma conexão de pelo menos 25 Mbps para melhor experiência em 1080p. Para 4K, recomendamos 50+ Mbps.',
-                  },
-                  {
-                    question: 'Quais dispositivos são suportados?',
-                    answer:
-                      'Você pode acessar via Parsec ou Moonlight em qualquer dispositivo: PC, Mac, Linux, iOS, Android e navegadores.',
-                  },
-                ].map((faq, idx) => (
-                  <motion.div
-                    key={idx}
-                    variants={itemVariants}
-                    className="rounded-xl border border-white/10 bg-white/[0.02] p-6"
-                  >
-                    <h4 className="text-lg font-semibold text-white mb-2">{faq.question}</h4>
-                    <p className="text-foreground/80">{faq.answer}</p>
-                  </motion.div>
-                ))}
-              </div>
+              {/* Segurança */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-xl p-8"
+              >
+                <div className="flex items-center gap-2 mb-4">
+                  <Shield size={20} className="text-cyan-400" />
+                  <h4 className="text-lg font-semibold text-white">Segurança</h4>
+                </div>
+                <Button variant="outline" className="gap-2">
+                  <Shield size={18} />
+                  Alterar Senha
+                </Button>
+              </motion.div>
             </motion.div>
           )}
         </motion.div>

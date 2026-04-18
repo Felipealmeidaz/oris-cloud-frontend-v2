@@ -1,18 +1,24 @@
 import { useState } from 'react';
-import { Menu, X, LogOut } from 'lucide-react';
+import { Menu, X, LogOut, LayoutDashboard } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { useAuthContext } from '@/contexts/AuthContext';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [location] = useLocation();
   const { user, isLoading, isLoggedIn, logout } = useAuthContext();
 
+  // Links da landing: se já estamos em /, usa hash puro (scroll);
+  // caso contrário, navega pra /#secao pra ir pra landing e rolar ate a secao.
+  const isOnLanding = location === '/';
+  const buildNavHref = (hash: string) => (isOnLanding ? `#${hash}` : `/#${hash}`);
+
   const navItems = [
-    { name: 'Início', href: '#home' },
-    { name: 'Sobre', href: '#about' },
-    { name: 'Planos', href: '#plans' },
-    { name: 'FAQ', href: '#faq' },
+    { name: 'Início', href: buildNavHref('home') },
+    { name: 'Sobre', href: buildNavHref('about') },
+    { name: 'Planos', href: buildNavHref('plans') },
+    { name: 'FAQ', href: buildNavHref('faq') },
   ];
 
   const displayName = user?.name || user?.email?.split('@')[0] || 'Usuário';
@@ -26,21 +32,23 @@ export default function Header() {
       className="fixed top-0 w-full z-50 bg-background/95 backdrop-blur-md border-b border-border"
     >
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo - Minimalista */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="flex items-center gap-2"
-        >
-          <img
-            src="/logo-sm.png"
-            srcSet="/logo-sm.png 1x, /logo-md.png 2x, /logo-lg.png 3x"
-            alt="Oris Cloud"
-            width={32}
-            height={32}
-            className="h-8 w-8"
-          />
-          <span className="text-xl font-bold tracking-wider text-white">ORIS</span>
-        </motion.div>
+        {/* Logo - sempre navega pra home publica */}
+        <Link to="/" aria-label="Ir para a página inicial">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <img
+              src="/logo-sm.png"
+              srcSet="/logo-sm.png 1x, /logo-md.png 2x, /logo-lg.png 3x"
+              alt="Oris Cloud"
+              width={32}
+              height={32}
+              className="h-8 w-8"
+            />
+            <span className="text-xl font-bold tracking-wider text-white">ORIS</span>
+          </motion.div>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-12">
@@ -62,6 +70,16 @@ export default function Header() {
             <div className="h-8 w-24 animate-pulse bg-white/10 rounded" />
           ) : isLoggedIn ? (
             <div className="flex items-center gap-3">
+              {/* Link Dashboard - só aparece quando nao esta no dashboard */}
+              {location !== '/dashboard' && (
+                <Link
+                  to="/dashboard"
+                  className="text-sm font-medium text-foreground/80 hover:text-white transition-colors inline-flex items-center gap-1.5"
+                >
+                  <LayoutDashboard size={16} />
+                  <span className="hidden lg:inline">Dashboard</span>
+                </Link>
+              )}
               {user?.image ? (
                 <img
                   src={user.image}
@@ -139,31 +157,43 @@ export default function Header() {
 
             {/* Auth - Mobile */}
             {isLoading ? null : isLoggedIn ? (
-              <div className="flex items-center justify-between pt-2 border-t border-white/10">
-                <div className="flex items-center gap-2">
-                  {user?.image ? (
-                    <img
-                      src={user.image}
-                      alt={displayName}
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-semibold text-white">
-                      {avatarInitial}
-                    </div>
-                  )}
-                  <span className="text-sm text-white truncate max-w-[180px]">{displayName}</span>
+              <div className="flex flex-col gap-3 pt-2 border-t border-white/10">
+                {location !== '/dashboard' && (
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setIsOpen(false)}
+                    className="text-foreground/80 hover:text-white transition-colors inline-flex items-center gap-2"
+                  >
+                    <LayoutDashboard size={16} />
+                    Dashboard
+                  </Link>
+                )}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {user?.image ? (
+                      <img
+                        src={user.image}
+                        alt={displayName}
+                        className="h-8 w-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-semibold text-white">
+                        {avatarInitial}
+                      </div>
+                    )}
+                    <span className="text-sm text-white truncate max-w-[180px]">{displayName}</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      logout();
+                    }}
+                    className="text-sm text-red-400 hover:text-red-300 transition-colors inline-flex items-center gap-1.5"
+                  >
+                    <LogOut size={16} />
+                    Sair
+                  </button>
                 </div>
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    logout();
-                  }}
-                  className="text-sm text-red-400 hover:text-red-300 transition-colors inline-flex items-center gap-1.5"
-                >
-                  <LogOut size={16} />
-                  Sair
-                </button>
               </div>
             ) : (
               <Link
