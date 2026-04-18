@@ -1,111 +1,453 @@
 import { motion } from 'framer-motion';
+import { useLocation } from 'wouter';
+import {
+  ArrowRight,
+  Cpu,
+  HardDrive,
+  MapPin,
+  Server,
+  Shield,
+  Sparkles,
+  Zap,
+} from 'lucide-react';
 import TypingAnimation from './TypingAnimation';
 
+/**
+ * Hero da landing Oris Cloud.
+ * Design sóbrio premium com especs reais AWS G4dn (NVIDIA Tesla T4).
+ * Elementos flutuantes sutis: VM card + chips + light orbs.
+ */
 export default function Hero() {
+  const [, navigate] = useLocation();
+
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center pt-20 pb-20 relative overflow-hidden">
-      {/* Banner Background */}
-      <div
-        className="absolute inset-0 bg-cover bg-center pointer-events-none"
-        style={{
-          backgroundImage: 'url(https://d2xsxph8kpxj0f.cloudfront.net/310419663032706170/WMz8HoFpHBf5sKDLPKcovU/banner_95a29d9e.png)',
-        }}
-      />
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/60 pointer-events-none" />
+    <section
+      id="home"
+      className="relative min-h-screen flex items-center pt-24 pb-20 overflow-hidden"
+    >
+      <BackgroundLayer />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="container mx-auto px-4 max-w-6xl relative z-10 text-center"
-      >
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="inline-block mb-8 px-4 py-2 border border-white/20 rounded-full text-sm text-foreground/80"
-        >
-          Cloud Gaming Revolucionário
-        </motion.div>
+      <div className="container mx-auto px-4 max-w-7xl relative z-10">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          {/* ============================ */}
+          {/* LEFT COLUMN — content        */}
+          {/* ============================ */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+            className="lg:col-span-7 text-center lg:text-left"
+          >
+            {/* Badge premium */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="inline-flex items-center gap-2 mb-7 px-3.5 py-1.5 rounded-full border border-white/15 bg-white/[0.03] backdrop-blur-sm text-xs font-medium text-foreground/80"
+            >
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400/80 animate-ping" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              </span>
+              <span>Powered by</span>
+              <span className="font-semibold text-white">AWS</span>
+              <span className="text-foreground/40">·</span>
+              <span className="font-semibold text-white">NVIDIA Tesla T4</span>
+            </motion.div>
 
-        {/* Main Heading */}
+            {/* H1 com gradient sutil */}
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="text-5xl md:text-6xl lg:text-[4.5rem] font-bold tracking-tight leading-[1.02] mb-6"
+            >
+              <span className="bg-gradient-to-br from-white via-white to-white/60 bg-clip-text text-transparent">
+                Cloud gaming
+              </span>
+              <br />
+              <span className="bg-gradient-to-br from-white via-white to-white/60 bg-clip-text text-transparent">
+                sem concessões.
+              </span>
+            </motion.h1>
+
+            {/* Subhead com typing */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="text-xl md:text-2xl text-foreground/70 mb-6 font-light"
+            >
+              <span>Jogue </span>
+              <TypingAnimation
+                words={[
+                  'no seu notebook',
+                  'em qualquer dispositivo',
+                  'sem comprar PC',
+                  'com hardware de data center',
+                ]}
+                typeSpeed={70}
+                deleteSpeed={40}
+                pauseDelay={2200}
+                loop={true}
+              />
+            </motion.div>
+
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-base md:text-lg text-foreground/60 max-w-xl mx-auto lg:mx-0 mb-9 leading-relaxed"
+            >
+              Máquinas virtuais de alta performance com GPU{' '}
+              <span className="text-white font-medium">NVIDIA Tesla T4</span>,
+              rodando na infraestrutura{' '}
+              <span className="text-white font-medium">AWS</span> com servidores
+              em São Paulo. Latência baixa. Zero investimento em hardware.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3 mb-10"
+            >
+              <motion.button
+                onClick={() => navigate('/#plans')}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative inline-flex items-center gap-2 px-7 py-3.5 bg-white text-black font-semibold rounded-lg overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.15)]"
+              >
+                <span className="relative z-10">Começar agora</span>
+                <ArrowRight
+                  size={16}
+                  className="relative z-10 transition-transform group-hover:translate-x-0.5"
+                />
+                {/* Glow animado */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
+              </motion.button>
+
+              <motion.button
+                onClick={() => navigate('/#about')}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 px-7 py-3.5 border border-white/15 text-white font-medium rounded-lg hover:bg-white/[0.03] hover:border-white/25 transition-colors"
+              >
+                <span>Ver planos</span>
+              </motion.button>
+            </motion.div>
+
+            {/* Trust bar com stats inline */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="flex flex-wrap items-center justify-center lg:justify-start gap-x-8 gap-y-3 text-sm text-foreground/50"
+            >
+              <TrustItem icon={<Shield size={14} />}>
+                <span className="text-white font-medium">99.9%</span> uptime
+              </TrustItem>
+              <TrustItem icon={<Zap size={14} />}>
+                <span className="text-white font-medium">&lt;30ms</span> latência
+              </TrustItem>
+              <TrustItem icon={<Sparkles size={14} />}>
+                <span className="text-white font-medium">Tesla T4</span> GPU
+              </TrustItem>
+            </motion.div>
+          </motion.div>
+
+          {/* ============================ */}
+          {/* RIGHT COLUMN — VM card       */}
+          {/* ============================ */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.35, duration: 0.8, ease: 'easeOut' }}
+            className="lg:col-span-5 relative h-[520px] hidden lg:block"
+          >
+            <FloatingVMCard />
+            <FloatingChips />
+          </motion.div>
+        </div>
+
+        {/* ============================ */}
+        {/* STATS BAR — bottom             */}
+        {/* ============================ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mb-8"
+          transition={{ delay: 0.6, duration: 0.7 }}
+          className="mt-16 pt-8 border-t border-white/[0.06]"
         >
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4">
-            Jogue Qualquer Jogo
-          </h1>
-          <div className="text-3xl md:text-4xl font-light text-foreground/80">
-            <span>em </span>
-            <TypingAnimation
-              words={['Qualquer Lugar', 'Qualquer Dispositivo', 'Sem Hardware Caro']}
-              typeSpeed={80}
-              deleteSpeed={50}
-              pauseDelay={2000}
-              loop={true}
-            />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+            {STATS.map((stat) => (
+              <StatItem key={stat.label} {...stat} />
+            ))}
           </div>
         </motion.div>
-
-        {/* Description */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="text-lg text-foreground/70 max-w-2xl mx-auto mb-12"
-        >
-          Oris Cloud oferece acesso a máquinas virtuais de alto desempenho com GPUs NVIDIA de última geração. Jogue seus jogos favoritos sem precisar investir em hardware caro.
-        </motion.p>
-
-        {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
-          <motion.a
-            href="#plans"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 bg-white text-black font-semibold rounded-sm hover:bg-gray-200 transition-colors"
-          >
-            Ver Planos
-          </motion.a>
-          <motion.a
-            href="#about"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 border border-white/30 text-white font-semibold rounded-sm hover:border-white/60 transition-colors"
-          >
-            Saiba Mais
-          </motion.a>
-        </motion.div>
-
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="mt-20 grid grid-cols-3 gap-8 max-w-2xl mx-auto"
-        >
-          {[
-            { number: '4K', label: 'Ultra HD Gaming' },
-            { number: '<15ms', label: 'Latência' },
-            { number: '∞', label: 'Biblioteca de Jogos' },
-          ].map((stat, index) => (
-            <div key={index} className="text-center">
-              <div className="text-3xl font-bold mb-2">{stat.number}</div>
-              <div className="text-sm text-foreground/60">{stat.label}</div>
-            </div>
-          ))}
-        </motion.div>
-      </motion.div>
+      </div>
     </section>
+  );
+}
+
+// ============================================================
+// BACKGROUND — grid pattern + light orbs + radial gradient
+// ============================================================
+
+function BackgroundLayer() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* Radial gradient central */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(56,189,248,0.08),transparent_70%)]" />
+
+      {/* Grid pattern SVG */}
+      <svg
+        className="absolute inset-0 w-full h-full opacity-[0.025]"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <pattern
+            id="grid-pattern"
+            width="40"
+            height="40"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M 40 0 L 0 0 0 40"
+              fill="none"
+              stroke="white"
+              strokeWidth="1"
+            />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+      </svg>
+
+      {/* Orb 1 — top left (cyan) */}
+      <motion.div
+        animate={{
+          opacity: [0.25, 0.4, 0.25],
+          scale: [1, 1.08, 1],
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute -top-40 -left-20 w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.18)_0%,transparent_70%)] blur-3xl"
+      />
+
+      {/* Orb 2 — bottom right (violet) */}
+      <motion.div
+        animate={{
+          opacity: [0.2, 0.35, 0.2],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: 'easeInOut',
+          delay: 1,
+        }}
+        className="absolute -bottom-40 -right-20 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(168,85,247,0.14)_0%,transparent_70%)] blur-3xl"
+      />
+
+      {/* Gradient fade bottom pra suavizar transicao */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background" />
+    </div>
+  );
+}
+
+// ============================================================
+// FLOATING VM CARD — specs de uma VM ativa (mockup)
+// ============================================================
+
+function FloatingVMCard() {
+  return (
+    <motion.div
+      animate={{ y: [0, -10, 0] }}
+      transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[420px]"
+    >
+      <div className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.015] backdrop-blur-xl p-6 shadow-2xl">
+        {/* Shine/highlight no topo */}
+        <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+
+        {/* Header */}
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2">
+            <div className="flex gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
+            </div>
+            <span className="text-[11px] font-mono text-foreground/50 ml-2">
+              vm-oris-premium
+            </span>
+          </div>
+          <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-400">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 animate-ping opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            </span>
+            Online
+          </div>
+        </div>
+
+        {/* Specs grid 2x2 */}
+        <div className="grid grid-cols-2 gap-3 mb-5">
+          <SpecCard icon={<Cpu size={14} />} label="GPU" value="Tesla T4" sub="16GB GDDR6" />
+          <SpecCard icon={<Server size={14} />} label="vCPU" value="16 cores" sub="Intel Xeon" />
+          <SpecCard icon={<HardDrive size={14} />} label="RAM" value="64 GB" sub="DDR4 ECC" />
+          <SpecCard icon={<MapPin size={14} />} label="Região" value="sa-east-1" sub="São Paulo" />
+        </div>
+
+        {/* Latency bar */}
+        <div className="mb-5">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-foreground/50">Latência</span>
+            <span className="text-xs font-mono font-semibold text-emerald-400">
+              12 ms
+            </span>
+          </div>
+          <div className="relative h-1.5 rounded-full bg-white/5 overflow-hidden">
+            <motion.div
+              initial={{ width: '0%' }}
+              animate={{ width: '18%' }}
+              transition={{ delay: 1, duration: 1.5, ease: 'easeOut' }}
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
+            />
+          </div>
+        </div>
+
+        {/* Connect button */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full py-2.5 rounded-lg bg-white text-black text-sm font-semibold flex items-center justify-center gap-2 transition-all hover:shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+        >
+          Conectar
+          <ArrowRight size={14} />
+        </motion.button>
+      </div>
+
+      {/* Glow atrás do card */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-cyan-500/10 via-transparent to-violet-500/10 blur-2xl" />
+    </motion.div>
+  );
+}
+
+function SpecCard({
+  icon,
+  label,
+  value,
+  sub,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  sub: string;
+}) {
+  return (
+    <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
+      <div className="flex items-center gap-1.5 text-foreground/50 mb-1.5">
+        {icon}
+        <span className="text-[10px] font-medium uppercase tracking-wider">
+          {label}
+        </span>
+      </div>
+      <p className="text-sm font-semibold text-white leading-tight">{value}</p>
+      <p className="text-[10px] text-foreground/40 mt-0.5">{sub}</p>
+    </div>
+  );
+}
+
+// ============================================================
+// FLOATING CHIPS — decorations ao redor do VM card
+// ============================================================
+
+function FloatingChips() {
+  return (
+    <>
+      <motion.div
+        animate={{ y: [0, -14, 0] }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+        className="absolute top-6 -left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-black/60 backdrop-blur-md text-xs font-semibold text-white shadow-lg"
+      >
+        <svg
+          className="h-3 w-auto"
+          viewBox="0 0 61 36"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M17.21 14.55c0 .85.09 1.54.26 2.04.19.5.43 1.05.77 1.64.12.2.17.4.17.57 0 .25-.15.5-.47.75l-1.55 1.04c-.22.15-.44.22-.64.22-.25 0-.5-.12-.75-.35-.35-.37-.64-.78-.89-1.18-.25-.42-.5-.89-.77-1.47-1.95 2.3-4.4 3.45-7.34 3.45-2.1 0-3.77-.6-5-1.8-1.22-1.2-1.84-2.8-1.84-4.8 0-2.12.75-3.85 2.27-5.15 1.52-1.3 3.54-1.95 6.1-1.95.85 0 1.72.07 2.64.2.92.12 1.87.33 2.86.57v-1.82c0-1.9-.4-3.22-1.17-3.97C11.09 1.8 9.73 1.42 7.79 1.42c-.9 0-1.82.1-2.76.32-.94.22-1.87.5-2.76.85-.4.17-.7.28-.87.32-.17.05-.3.07-.4.07-.34 0-.5-.25-.5-.75v-1.2c0-.4.05-.7.17-.87.12-.17.35-.35.7-.52C2.26-.87 3.37-1.2 4.69-1.45 6-1.72 7.4-1.84 8.89-1.84c3.2 0 5.55.72 7.06 2.17 1.5 1.45 2.26 3.65 2.26 6.6v8.7h-.01zM8.14 17.92c.85 0 1.72-.15 2.64-.45.92-.3 1.74-.85 2.42-1.6.4-.47.7-1 .87-1.6.17-.6.27-1.32.27-2.17v-1.05c-.72-.17-1.47-.32-2.26-.42-.8-.1-1.57-.15-2.34-.15-1.67 0-2.89.32-3.72.97-.82.65-1.22 1.57-1.22 2.77 0 1.12.29 1.97.87 2.55.58.57 1.4.85 2.47.85zm17.83 2.37c-.44 0-.75-.07-.94-.25-.2-.15-.37-.5-.52-.97l-5.85-19.24c-.15-.5-.22-.82-.22-1 0-.4.2-.62.6-.62h2.4c.47 0 .8.07.97.25.2.15.35.5.5.97l4.18 16.5 3.87-16.5c.12-.5.27-.82.47-.97.2-.17.55-.25 1-.25h1.95c.47 0 .8.07 1 .25.2.15.37.5.47.97l3.92 16.7 4.3-16.7c.15-.5.32-.82.5-.97.2-.17.52-.25.97-.25h2.27c.4 0 .62.2.62.62 0 .12-.02.25-.05.4-.02.15-.07.35-.17.62l-6 19.24c-.15.5-.32.82-.52.97-.2.18-.52.25-.94.25h-2.1c-.47 0-.8-.07-1-.25-.2-.2-.37-.5-.47-1l-3.85-16.08-3.82 16.05c-.12.5-.27.82-.47 1-.2.17-.55.25-1 .25h-2.1zm28.52.65c-1.4 0-2.8-.17-4.14-.5-1.35-.32-2.4-.67-3.1-1.07-.42-.25-.72-.52-.82-.8-.1-.25-.17-.52-.17-.77v-1.25c0-.5.2-.75.57-.75.15 0 .3.02.45.07.15.05.37.15.62.25.85.37 1.77.67 2.74.87.97.2 1.95.3 2.94.3 1.55 0 2.76-.27 3.62-.82.85-.55 1.27-1.35 1.27-2.4 0-.7-.22-1.27-.67-1.77-.45-.5-1.3-.94-2.52-1.35l-3.62-1.13c-1.82-.57-3.17-1.42-4-2.55-.82-1.1-1.25-2.32-1.25-3.62 0-1.05.22-1.97.67-2.77.45-.8 1.05-1.5 1.8-2.05.75-.57 1.6-.97 2.6-1.27 1-.3 2.05-.42 3.14-.42.55 0 1.12.02 1.67.1.57.07 1.1.17 1.62.27.5.12.97.25 1.42.4.45.15.8.3 1.05.45.35.2.6.4.75.62.15.2.22.47.22.8v1.15c0 .5-.2.77-.57.77-.2 0-.52-.1-.94-.3-1.42-.65-3.02-.97-4.8-.97-1.4 0-2.5.22-3.27.7-.77.47-1.17 1.2-1.17 2.25 0 .7.25 1.3.75 1.77.5.47 1.42.94 2.74 1.37l3.55 1.13c1.8.57 3.1 1.37 3.87 2.4.77 1.02 1.15 2.2 1.15 3.5 0 1.07-.22 2.05-.65 2.9-.45.85-1.05 1.6-1.82 2.2-.77.62-1.7 1.07-2.77 1.4-1.12.35-2.3.52-3.58.52z" />
+        </svg>
+        AWS
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
+        className="absolute -top-2 -right-6 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-md text-xs font-semibold text-cyan-300 shadow-lg"
+      >
+        <Zap size={12} />
+        1440p · Ultra
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, -12, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 2.5 }}
+        className="absolute bottom-10 -left-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-violet-500/20 bg-violet-500/5 backdrop-blur-md text-xs font-semibold text-violet-300 shadow-lg"
+      >
+        <Sparkles size={12} />
+        Ray Tracing
+      </motion.div>
+    </>
+  );
+}
+
+// ============================================================
+// TRUST BAR items
+// ============================================================
+
+function TrustItem({
+  icon,
+  children,
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="inline-flex items-center gap-1.5">
+      <span className="text-foreground/40">{icon}</span>
+      <span>{children}</span>
+    </div>
+  );
+}
+
+// ============================================================
+// STATS BAR items
+// ============================================================
+
+interface Stat {
+  label: string;
+  value: string;
+  sub: string;
+}
+
+const STATS: Stat[] = [
+  { label: 'Infraestrutura', value: 'AWS G4dn', sub: 'São Paulo' },
+  { label: 'GPU', value: 'NVIDIA Tesla T4', sub: '16GB GDDR6' },
+  { label: 'Configurações', value: '4 a 16', sub: 'vCPU · até 64GB RAM' },
+  { label: 'Latência média', value: '< 30 ms', sub: '99.9% uptime' },
+];
+
+function StatItem({ label, value, sub }: Stat) {
+  return (
+    <div>
+      <p className="text-[10px] font-semibold uppercase tracking-widest text-foreground/40 mb-1.5">
+        {label}
+      </p>
+      <p className="text-lg font-bold text-white leading-tight">{value}</p>
+      <p className="text-xs text-foreground/50 mt-0.5">{sub}</p>
+    </div>
   );
 }
