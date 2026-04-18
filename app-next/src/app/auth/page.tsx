@@ -13,8 +13,8 @@
  *                      via callback sendResetPassword.
  */
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { signIn, signUp, authClient } from "@/lib/auth-client";
@@ -37,11 +37,15 @@ type ForgotStep = "closed" | "form" | "sent";
 
 export default function AuthPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { toast } = useToast();
 
-  // Aceita ?tab=register ou ?tab=login. Default: login.
-  const initialTab = searchParams.get("tab") === "register" ? "register" : "login";
+  // Aceita ?tab=register ou ?tab=login. Lido em useEffect pra evitar SSR
+  // bailout do useSearchParams que exigiria Suspense boundary no Next 16.
+  const [currentTab, setCurrentTab] = useState<"login" | "register">("login");
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("tab") === "register") setCurrentTab("register");
+  }, []);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -314,7 +318,7 @@ export default function AuthPage() {
   // Estado default: tabs Login/Registrar
   return (
     <AuthShell>
-      <Tabs defaultValue={initialTab} className="w-full">
+      <Tabs value={currentTab} onValueChange={(v) => setCurrentTab(v as "login" | "register")} className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-[#11131b]">
           <TabsTrigger value="login">Login</TabsTrigger>
           <TabsTrigger value="register">Registrar</TabsTrigger>
