@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id            String    @id
+  name          String    @unique
+  email         String    @unique
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  session       session[]
+  account       account[]
+}
+
+model session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model account {
+  id                String    @id
+  accountId         String
+  providerId        String
+  userId            String
+  accessToken       String?
+  refreshToken      String?
+  idToken           String?
+  expiresAt         DateTime?
+  password          String?
+  createdAt         DateTime
+  updatedAt         DateTime
+  user              user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model EmailVerification {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+model Plan {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  price       Float
+  duration    String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model VCpuPlan {
+  id          String   @id @default(cuid())
+  name        String
+  vCpus       Int
+  ramGB       Int
+  duration    String
+  days        Int
+  price       Float
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([vCpus, days])
+  @@map("vcpu_plans")
+}
+
+model Stock {
+  id          String   @id @default(cuid())
+  total       Int
+  available   Int
+  reserved    Int      @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  customId        String   @unique
+  txid            String   @unique
+  email           String
+  plan            String
+  amount          Float
+  diskAddonId     String?
+  diskSizeGB      Int      @default(256)
+  vCpuPlanId      String?
+  vCpus           Int      @default(4)
+  ramGB           Int      @default(28)
+  status          String   @default("pending")
+  qrCodeBase64    String?  @db.Text
+  pixCopiaECola   String?  @db.Text
+  loc             String?
+  webhookSended   Boolean  @default(false)
+  discordId       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([customId])
+  @@index([txid])
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model DiskAddon {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  sizeGB      Int
+  price       Float
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("disk_addons")
+}
+
+model PurchaseToken {
+  id          String    @id @default(cuid())
+  token       String    @unique
+  planId      String
+  days        Int
+  price       Float
+  diskSizeGB  Int       @default(256)
+  vCpus       Int       @default(4)
+  ramGB       Int       @default(28)
+  isRedeemed  Boolean   @default(false)
+  redeemedAt  DateTime?
+  redeemedBy  String?
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime
+  txid        String    @unique
+
+  @@index([token])
+  @@index([txid])
+  @@index([isRedeemed])
+  @@index([expiresAt])
+  @@map("purchase_tokens")
+}
+
+model Subscription {
+  id          String    @id @default(cuid())
+  userId      String
+  userEmail   String
+  planId      String
+  planName    String
+  days        Int
+  status      String    @default("active")
+  startDate   DateTime  @default(now())
+  expiresAt   DateTime
+  tokenId     String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([userEmail])
+  @@index([status])
+  @@index([userId, status])
+  @@index([expiresAt])
+  @@map("subscriptions")
+}
+
+model Disk {
+  id          String   @id @default(cuid())
+  name        String
+  awsVolumeId String?
+  userId      String
+  validUntil  DateTime
+  isActive    Boolean  @default(true)
+  vCpus       Int      @default(4)
+  sizeGB      Int      @default(256)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+  @@index([userId])
+  @@index([userId, isActive])
+  @@index([isActive])
+  @@map("disks")
+}
