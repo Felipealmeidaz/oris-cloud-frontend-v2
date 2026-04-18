@@ -76,20 +76,20 @@ export default function Header() {
                         <NavigationMenuList>
                             {/* Inicio */}
                             <NavigationMenuItem>
-                                <Link href="/">
-                                    <NavigationMenuLink className={`${navigationMenuTriggerStyle()} bg-transparent`}>
+                                <NavigationMenuLink asChild>
+                                    <Link href="/" className={`${navigationMenuTriggerStyle()} bg-transparent`}>
                                         Inicio
-                                    </NavigationMenuLink>
-                                </Link>
+                                    </Link>
+                                </NavigationMenuLink>
                             </NavigationMenuItem>
 
                             {/* Máquinas - link direto (não temos mais 'Máquinas Físicas') */}
                             <NavigationMenuItem>
-                                <Link href="/machines">
-                                    <NavigationMenuLink className={`${navigationMenuTriggerStyle()} bg-transparent`}>
+                                <NavigationMenuLink asChild>
+                                    <Link href="/machines" className={`${navigationMenuTriggerStyle()} bg-transparent`}>
                                         Máquinas
-                                    </NavigationMenuLink>
-                                </Link>
+                                    </Link>
+                                </NavigationMenuLink>
                             </NavigationMenuItem>
 
                             {/* Downloads */}
@@ -140,12 +140,17 @@ export default function Header() {
 
                             {/* Discord */}
                             <NavigationMenuItem>
-                                <Link href="/discord" target="_blank" rel="noopener noreferrer">
-                                    <NavigationMenuLink className={`${navigationMenuTriggerStyle()} bg-transparent flex items-center gap-2`}>
+                                <NavigationMenuLink asChild>
+                                    <Link
+                                        href="/discord"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={`${navigationMenuTriggerStyle()} bg-transparent flex items-center gap-2`}
+                                    >
                                         Discord
                                         <ExternalLink className="h-4 w-4" />
-                                    </NavigationMenuLink>
-                                </Link>
+                                    </Link>
+                                </NavigationMenuLink>
                             </NavigationMenuItem>
                         </NavigationMenuList>
                     </NavigationMenu>
