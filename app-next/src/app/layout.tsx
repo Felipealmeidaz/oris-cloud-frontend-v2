@@ -39,8 +39,18 @@ export default function RootLayout({
     '/order/payment': {
       title: 'Pagamento - Oris Cloud'
     },
+    '/auth': {
+      title: 'Entrar - Oris Cloud'
+    },
+    '/reset-password': {
+      title: 'Redefinir senha - Oris Cloud'
+    },
   };
   const currentMetadata = routeMetadata[pathname as keyof typeof routeMetadata] || metadata;
+
+  // Rotas stand-alone: sem Header/Footer globais pra experiência focada no form
+  // (a própria página renderiza seu próprio hero e branding).
+  const isStandalone = pathname === '/auth' || pathname === '/reset-password';
 
   return (
     <html lang="en">
@@ -56,9 +66,9 @@ export default function RootLayout({
         className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} font-sans antialiased overflow-x-hidden`}
       >
         <div className="min-h-screen w-screen bg-[rgb(9,9,11)] text-white">
-          <Header />
+          {!isStandalone && <Header />}
           <main>{children}</main>
-          <Footer />
+          {!isStandalone && <Footer />}
           <Toaster />
         </div>
       </body>
