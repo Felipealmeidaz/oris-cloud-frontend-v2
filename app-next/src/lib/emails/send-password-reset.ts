@@ -27,31 +27,50 @@ export async function sendPasswordResetEmail({
     throw new Error("RESEND_FROM_EMAIL ausente");
   }
 
-  const greeting = name ? `Olá ${escapeHtml(name)},` : "Olá,";
+  const firstName = name ? escapeHtml(name).split(" ")[0] : null;
+  const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
 
   const bodyHtml = `
-    <h1 style="margin:0 0 18px 0;font-family:Arial,Helvetica,sans-serif;font-size:26px;line-height:1.25;font-weight:700;color:#FFFFFF;letter-spacing:-0.02em;">
-      Redefinir sua senha
-    </h1>
-    <p style="margin:0 0 14px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#E5E7EB;">
+    <p style="margin:20px 0 14px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:#FFFFFF;font-weight:600;">
       ${greeting}
     </p>
-    <p style="margin:0 0 14px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#E5E7EB;">
-      Recebemos uma solicitação pra redefinir a senha da sua conta na <strong style="color:#FFFFFF;">Oris Cloud</strong>. Clique no botão abaixo pra escolher uma nova senha.
+    <p style="margin:0 0 14px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#D1D5DB;">
+      Recebemos uma solicitação pra redefinir a senha da sua conta na <strong style="color:#22C55E;">Oris Cloud</strong>. Pra criar uma nova senha é só clicar no botão abaixo — vai abrir uma página segura pra você escolher a nova combinação.
     </p>
-    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#9CA3AF;">
-      Este link expira em 1 hora por segurança.
+    <p style="margin:0 0 4px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.7;color:#D1D5DB;">
+      O processo leva menos de 30 segundos:
     </p>
   `;
 
   const html = renderEmailLayout({
     title: "Redefinir sua senha · Oris Cloud",
-    previewText: "Clique pra criar uma nova senha da sua conta Oris Cloud.",
+    previewText: "Link seguro pra criar uma nova senha da sua conta Oris Cloud. Expira em 1 hora.",
+    heroTitle: "Redefinir sua senha",
+    heroSubtitle: "Crie uma nova senha pra acessar sua conta em segurança.",
     bodyHtml,
-    ctaLabel: "Redefinir senha",
+    ctaLabel: "Criar nova senha",
     ctaUrl: url,
+    highlights: [
+      {
+        icon: "🔒",
+        title: "Link único e seguro",
+        description: "Esse link é pessoal e só funciona uma vez. Depois de usar, ele expira.",
+      },
+      {
+        icon: "⏱️",
+        title: "Válido por 1 hora",
+        description: "Por segurança, o link expira em 60 minutos. Solicite um novo se precisar.",
+      },
+      {
+        icon: "💡",
+        title: "Use uma senha forte",
+        description: "Combine letras maiúsculas, minúsculas, números e símbolos. Evite senhas usadas em outros sites.",
+      },
+    ],
+    securityNote:
+      "Este link expira em 1 hora e só pode ser usado uma vez. Nunca compartilhe com ninguém.",
     footerNote:
-      "Se você não solicitou a redefinição, ignore este email. Sua senha atual continua válida e sua conta está segura.",
+      "Se você não solicitou a redefinição, ignore este email — sua senha atual continua válida e sua conta está segura. Se suspeita que alguém está tentando acessar sua conta, entre em contato com nosso suporte imediatamente.",
   });
 
   try {

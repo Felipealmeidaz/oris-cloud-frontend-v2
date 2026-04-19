@@ -31,6 +31,9 @@ yarn-debug.log*
 yarn-error.log*
 aws-service.log
 
+# Preview artifacts (scripts/preview-emails.ts)
+preview-*.html
+
 # OS
 .DS_Store
 Thumbs.db
