@@ -32,14 +32,44 @@ export default function WorldMap({
     return { x, y };
   };
 
+  // Arco proporcional à distância: trajetos curtos (ex: Manaus→SP ~40u)
+  // ganham curvatura suave (6-12u), trajetos longos (SP→Tóquio ~300u)
+  // ganham arcos amplos (50-60u). Evita loops gigantes em distâncias pequenas.
   const createCurvedPath = (
     start: { x: number; y: number },
     end: { x: number; y: number }
   ) => {
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const arcHeight = Math.max(6, Math.min(50, distance * 0.22));
     const midX = (start.x + end.x) / 2;
-    const midY = Math.min(start.y, end.y) - 50;
+    const midY = Math.min(start.y, end.y) - arcHeight;
     return `M ${start.x} ${start.y} Q ${midX} ${midY} ${end.x} ${end.y}`;
   };
+
+  // Deduplica pontos: quando várias rotas convergem pro mesmo endpoint
+  // (ex: hub central), evitamos sobrepor múltiplos dots animados.
+  // Pontos com 2+ rotas apontando pra eles são marcados como "hub" e
+  // ganham destaque visual (raio maior, pulse maior).
+  const pointKey = (p: { lat: number; lng: number }) =>
+    `${p.lat.toFixed(4)},${p.lng.toFixed(4)}`;
+  const pointUsage = new Map<
+    string,
+    { lat: number; lng: number; count: number }
+  >();
+  dots.forEach((d) => {
+    [d.start, d.end].forEach((p) => {
+      const key = pointKey(p);
+      const existing = pointUsage.get(key);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        pointUsage.set(key, { lat: p.lat, lng: p.lng, count: 1 });
+      }
+    });
+  });
+  const uniquePoints = Array.from(pointUsage.values());
 
   return (
     <div className="w-full aspect-[2/1] bg-[rgb(9,9,11)] rounded-lg relative font-sans">
@@ -92,74 +122,41 @@ export default function WorldMap({
           </linearGradient>
         </defs>
 
-        {dots.map((dot, i) => (
-          <g key={`points-group-${i}`}>
-            <g key={`start-${i}`}>
+        {uniquePoints.map((point, i) => {
+          const { x, y } = projectPoint(point.lat, point.lng);
+          const isHub = point.count >= 2;
+          const baseRadius = isHub ? 3 : 1.8;
+          const pulseTo = isHub ? 12 : 7;
+          return (
+            <g key={`point-${i}`}>
+              <circle cx={x} cy={y} r={baseRadius} fill={lineColor} />
               <circle
-                cx={projectPoint(dot.start.lat, dot.start.lng).x}
-                cy={projectPoint(dot.start.lat, dot.start.lng).y}
-                r="2"
+                cx={x}
+                cy={y}
+                r={baseRadius}
                 fill={lineColor}
-              />
-              <circle
-                cx={projectPoint(dot.start.lat, dot.start.lng).x}
-                cy={projectPoint(dot.start.lat, dot.start.lng).y}
-                r="2"
-                fill={lineColor}
-                opacity="0.5"
+                opacity={isHub ? 0.6 : 0.4}
               >
                 <animate
                   attributeName="r"
-                  from="2"
-                  to="8"
-                  dur="1.5s"
+                  from={baseRadius}
+                  to={pulseTo}
+                  dur="1.8s"
                   begin="0s"
                   repeatCount="indefinite"
                 />
                 <animate
                   attributeName="opacity"
-                  from="0.5"
+                  from={isHub ? 0.6 : 0.4}
                   to="0"
-                  dur="1.5s"
+                  dur="1.8s"
                   begin="0s"
                   repeatCount="indefinite"
                 />
               </circle>
             </g>
-            <g key={`end-${i}`}>
-              <circle
-                cx={projectPoint(dot.end.lat, dot.end.lng).x}
-                cy={projectPoint(dot.end.lat, dot.end.lng).y}
-                r="2"
-                fill={lineColor}
-              />
-              <circle
-                cx={projectPoint(dot.end.lat, dot.end.lng).x}
-                cy={projectPoint(dot.end.lat, dot.end.lng).y}
-                r="2"
-                fill={lineColor}
-                opacity="0.5"
-              >
-                <animate
-                  attributeName="r"
-                  from="2"
-                  to="8"
-                  dur="1.5s"
-                  begin="0s"
-                  repeatCount="indefinite"
-                />
-                <animate
-                  attributeName="opacity"
-                  from="0.5"
-                  to="0"
-                  dur="1.5s"
-                  begin="0s"
-                  repeatCount="indefinite"
-                />
-              </circle>
-            </g>
-          </g>
-        ))}
+          );
+        })}
       </svg>
     </div>
   );
