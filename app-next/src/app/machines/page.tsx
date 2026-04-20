@@ -5,65 +5,330 @@ import { useEffect, useState } from "react";
 import { useSession } from "@/lib/auth-client";
 
 import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader
-} from "@/components/ui/card";
-import {
-    Check,
-    ExternalLink,
     Cpu,
     MemoryStick,
     HardDrive,
     Microchip,
     Headphones,
     Cloud,
-    Cloudy,
-    Server,
     MonitorCheck,
     RefreshCw,
     Settings,
     ShieldCheck,
     AlertTriangle,
-    Info,
     UserPlus,
-    LogIn
+    LogIn,
+    Check,
+    Sparkles,
+    Loader2,
+    Zap,
+    Rocket,
+    Crown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // styles
 import "./styles.css";
 
+/**
+ * /machines — lista todos os tiers de máquinas virtuais disponíveis.
+ *
+ * Busca dinamicamente os planos ativos em /api/vcpu-plans (dados do Prisma),
+ * agrupa por quantidade de vCPUs, e renderiza um card por tier com os
+ * preços das durações (diário, semanal, mensal).
+ *
+ * Antes estava hardcoded com 1 card cobrindo "4 ou 16 vCPUs", o que escondia
+ * o tier Pro (8 vCPUs) e não mostrava preços reais do banco.
+ */
+
+interface VCpuPlan {
+    id: string;
+    name: string;
+    vCpus: number;
+    ramGB: number;
+    duration: string;
+    days: number;
+    price: number;
+    active: boolean;
+}
+
+interface GroupedPlan {
+    vCpus: number;
+    ramGB: number;
+    plans: VCpuPlan[];
+}
+
+interface TierConfig {
+    label: string;
+    tagline: string;
+    icon: typeof Zap;
+    accentClass: string;
+    borderClass: string;
+    badgeClass: string;
+    popular?: boolean;
+}
+
+/**
+ * Mapeia quantidade de vCPUs pra configuração visual/copy do tier.
+ * Se o banco adicionar um tier novo (ex: 24 vCPUs), cai no fallback genérico.
+ */
+const TIER_CONFIGS: Record<number, TierConfig> = {
+    4: {
+        label: "Básico",
+        tagline: "Ideal pra jogos casuais e acesso remoto básico.",
+        icon: Zap,
+        accentClass: "text-emerald-400",
+        borderClass: "border-gray-800 hover:border-emerald-500/50",
+        badgeClass: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    },
+    8: {
+        label: "Pro",
+        tagline: "Performance balanceada pra jogos AAA em 1080p/1440p.",
+        icon: Rocket,
+        accentClass: "text-emerald-300",
+        borderClass: "border-emerald-500/60 hover:border-emerald-400",
+        badgeClass: "bg-emerald-500/15 text-emerald-300 border-emerald-500/40",
+        popular: true,
+    },
+    16: {
+        label: "Ultra",
+        tagline: "Máximo poder pra streaming, edição e 4K.",
+        icon: Crown,
+        accentClass: "text-amber-400",
+        borderClass: "border-gray-800 hover:border-amber-500/50",
+        badgeClass: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+    },
+};
+
+function getTierConfig(vCpus: number): TierConfig {
+    return (
+        TIER_CONFIGS[vCpus] ?? {
+            label: `${vCpus} vCPUs`,
+            tagline: "Configuração customizada.",
+            icon: Cloud,
+            accentClass: "text-white",
+            borderClass: "border-gray-800 hover:border-white/30",
+            badgeClass: "bg-white/10 text-white border-white/20",
+        }
+    );
+}
+
+/**
+ * Formata dias pra label curta ("1d", "7d", "30d").
+ * Se for 30, mostra "1 mês" pra ficar mais humano.
+ */
+function formatDuration(days: number): string {
+    if (days === 1) return "Diário";
+    if (days === 7) return "Semanal";
+    if (days === 15) return "Quinzenal";
+    if (days === 30) return "Mensal";
+    if (days === 90) return "Trimestral";
+    return `${days}d`;
+}
+
+function formatPrice(price: number): string {
+    return price.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        minimumFractionDigits: price % 1 === 0 ? 0 : 2,
+        maximumFractionDigits: 2,
+    });
+}
+
+function TierCard({ group }: { group: GroupedPlan }) {
+    const config = getTierConfig(group.vCpus);
+    const Icon = config.icon;
+    const cheapest = group.plans.reduce((min, p) =>
+        p.price / p.days < min.price / min.days ? p : min
+    );
+    const pricePerDay = cheapest.price / cheapest.days;
+
+    return (
+        <div
+            className={`relative flex flex-col rounded-2xl border bg-gradient-to-b from-white/[0.02] to-transparent p-6 transition ${config.borderClass}`}
+        >
+            {/* Badge "Mais popular" pro Pro */}
+            {config.popular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <div className="inline-flex items-center gap-1 rounded-full bg-emerald-500 px-3 py-1 text-xs font-semibold text-black shadow-lg shadow-emerald-500/30">
+                        <Sparkles className="h-3 w-3" />
+                        Mais popular
+                    </div>
+                </div>
+            )}
+
+            {/* Header do tier */}
+            <div className="mb-5 flex items-start justify-between gap-3">
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <Icon className={`h-4 w-4 ${config.accentClass}`} />
+                        <h3 className="text-xl font-semibold text-white">
+                            {config.label}
+                        </h3>
+                    </div>
+                    <p className="text-sm text-gray-400">{config.tagline}</p>
+                </div>
+                <span
+                    className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-mono font-medium ${config.badgeClass}`}
+                >
+                    {group.vCpus} vCPUs
+                </span>
+            </div>
+
+            {/* Preço a partir de */}
+            <div className="mb-5 pb-5 border-b border-white/5">
+                <div className="flex items-baseline gap-1.5">
+                    <span className="text-xs text-gray-500">a partir de</span>
+                </div>
+                <div className="flex items-baseline gap-1.5">
+                    <span className="text-3xl font-bold text-white">
+                        {formatPrice(pricePerDay)}
+                    </span>
+                    <span className="text-sm text-gray-400">/dia</span>
+                </div>
+            </div>
+
+            {/* Specs */}
+            <ul className="mb-6 space-y-2.5 text-sm">
+                <li className="flex items-center gap-2.5 text-gray-300">
+                    <Cpu className={`h-4 w-4 shrink-0 ${config.accentClass}`} />
+                    <span>
+                        <span className="font-medium text-white">
+                            {group.vCpus} vCPUs
+                        </span>{" "}
+                        {group.vCpus <= 4 ? "AMD EPYC" : "Intel Xeon"}
+                    </span>
+                </li>
+                <li className="flex items-center gap-2.5 text-gray-300">
+                    <MemoryStick className={`h-4 w-4 shrink-0 ${config.accentClass}`} />
+                    <span>
+                        <span className="font-medium text-white">{group.ramGB}GB</span>{" "}
+                        RAM DDR5
+                    </span>
+                </li>
+                <li className="flex items-center gap-2.5 text-gray-300">
+                    <Microchip className={`h-4 w-4 shrink-0 ${config.accentClass}`} />
+                    <span>
+                        <span className="font-medium text-white">NVIDIA Tesla T4</span>{" "}
+                        (16GB)
+                    </span>
+                </li>
+                <li className="flex items-center gap-2.5 text-gray-300">
+                    <HardDrive className={`h-4 w-4 shrink-0 ${config.accentClass}`} />
+                    <span>
+                        <span className="font-medium text-white">256GB SSD</span>{" "}
+                        NVMe
+                    </span>
+                </li>
+                <li className="flex items-center gap-2.5 text-gray-300">
+                    <MonitorCheck className={`h-4 w-4 shrink-0 ${config.accentClass}`} />
+                    <span>Windows 10 Enterprise (BYOL)</span>
+                </li>
+            </ul>
+
+            {/* Opções de duração */}
+            <div className="mb-6 space-y-1.5">
+                <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    Opções de duração
+                </p>
+                {group.plans
+                    .slice()
+                    .sort((a, b) => a.days - b.days)
+                    .map((plan) => (
+                        <div
+                            key={plan.id}
+                            className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 text-sm"
+                        >
+                            <span className="text-gray-300">
+                                {formatDuration(plan.days)}
+                            </span>
+                            <span className="font-mono font-medium text-white">
+                                {formatPrice(plan.price)}
+                            </span>
+                        </div>
+                    ))}
+            </div>
+
+            {/* CTA */}
+            <Link
+                href={`/order?plan=${encodeURIComponent(cheapest.id)}`}
+                className="mt-auto"
+            >
+                <Button
+                    className={`w-full h-11 font-semibold ${
+                        config.popular
+                            ? "bg-emerald-500 hover:bg-emerald-400 text-black"
+                            : "bg-white/10 hover:bg-white/15 text-white border border-white/10"
+                    }`}
+                >
+                    Adquirir {config.label}
+                </Button>
+            </Link>
+        </div>
+    );
+}
+
 export default function Machines() {
     const { data: session, isPending } = useSession();
     const [mounted, setMounted] = useState(false);
-    useEffect(() => { setMounted(true); }, []);
+    const [groups, setGroups] = useState<GroupedPlan[] | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                const res = await fetch("/api/vcpu-plans");
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                if (cancelled) return;
+                const sorted = (data.groupedPlans as GroupedPlan[]).sort(
+                    (a, b) => a.vCpus - b.vCpus
+                );
+                setGroups(sorted);
+            } catch (e: unknown) {
+                if (cancelled) return;
+                const msg = e instanceof Error ? e.message : "erro desconhecido";
+                setError(msg);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     return (
-        <div className="min-h-screen w-screen flex flex-col items-center justify-center bg-[rgb(9,9,11)] text-white ">
+        <div className="min-h-screen w-screen flex flex-col items-center bg-[rgb(9,9,11)] text-white ">
 
-            {/* Main Section */}
-            <section className="relative px-11 mt-36 md:mt-48">
-
-                {/* Centered Blue Glow Effect */}
-                <div className="absolute inset-0 flex justify-center items-center z-0">
-                    <div className="w-[200%] h-full bg-gradient-to-r bg-white/30 opacity-10 blur-3xl rounded-full" />
+            {/* Hero */}
+            <section className="relative w-full px-6 md:px-11 mt-36 md:mt-44 pb-6">
+                <div className="absolute inset-0 flex justify-center items-center z-0 pointer-events-none">
+                    <div className="w-[200%] h-full bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-emerald-500/10 opacity-40 blur-3xl rounded-full" />
                 </div>
 
                 <div className="relative mx-auto max-w-5xl text-center">
-                    <h1 className="mb-3 text-xl font-normal tracking-wide text-white sm:text-2xl md:text-3xl lg:text-4xl">
-                        Encontre o plano ideal sem complicações!
+                    <div className="inline-flex items-center gap-2 mb-5 px-3.5 py-1.5 rounded-full border border-white/15 bg-white/[0.03] text-xs font-medium text-white/80">
+                        <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+                        3 configurações, mesma GPU Tesla T4
+                    </div>
+                    <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-white">
+                        Escolha a máquina ideal
                     </h1>
-                    <p className="mx-auto mb-6 text-sm text-gray-400 sm:text-base">
-                        Selecione o plano que melhor atende às suas necessidades e comece a desfrutar dos benefícios de imediato.
+                    <p className="mx-auto max-w-2xl text-base text-gray-400 sm:text-lg">
+                        Todos os planos rodam em AWS São Paulo com NVIDIA Tesla T4 e
+                        SSD NVMe. A diferença está no poder de CPU e RAM conforme seu
+                        uso.
                     </p>
 
-                    {/* CTA de criar conta / entrar — so aparece pra quem NAO esta logado */}
+                    {/* CTA de criar conta — só pra quem NÃO está logado */}
                     {mounted && !isPending && !session && (
-                        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8">
+                        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-8">
                             <Link href="/auth?tab=register">
-                                <Button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 h-11">
+                                <Button className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold px-6 h-11">
                                     <UserPlus className="h-4 w-4 mr-2" />
                                     Criar conta grátis
                                 </Button>
@@ -79,73 +344,61 @@ export default function Machines() {
                 </div>
             </section>
 
-            {/* Plans Section */}
-            <section className="relative px-4 pt-2">
-                <div className="flex flex-col gap-6 max-w-6xl mx-auto p-2">
-
-                    {/* Virtuais */}
-                    <Card className="card-hover-effect relative border-emerald-500 bg-transparent text-white transition-all duration-300 hover:border-emerald-400 hover:brightness-110">
-                        <div className="flex flex-col md:flex-row">
-                            <div className="md:w-1/3 p-6">
-                                <CardHeader className="p-0">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <Cloudy className="h-5 w-5" />
-                                        <h2 className="text-lg">Máquinas Virtuais</h2>
-                                    </div>
-                                    <p className="text-sm text-gray-400">
-                                        Uma configuração excelente para rodar jogos que exigem performance.
-                                    </p>
-                                </CardHeader>
-                            </div>
-                            <div className="md:w-1/2 p-6 flex items-center">
-                                <CardContent className="p-0 w-full">
-                                    <ul className="grid gap-3">
-                                        <li className="flex items-center gap-3">
-                                            <Cpu className="flex-shrink-0 h-5 w-5 text-emerald-500" />
-                                            <span className="text-sm">CPU: AMD EPYC (4 vCPUs) ou Intel Xeon (16 vCPUs)</span>
-                                        </li>
-                                        <li className="flex items-center gap-3">
-                                            <MemoryStick className="flex-shrink-0 h-5 w-5 text-emerald-500" />
-                                            <span className="text-sm">RAM: 28GB ou 22GB (DDR5)</span>
-                                        </li>
-                                        <li className="flex items-center gap-3">
-                                            <HardDrive className="flex-shrink-0 h-5 w-5 text-emerald-500" />
-                                            <span className="text-sm">Disco: 1x 256GB (SSD)</span>
-                                        </li>
-                                        <li className="flex items-center gap-3">
-                                            <Microchip className="flex-shrink-0 h-5 w-5 text-emerald-500" />
-                                            <span className="text-sm">GPU: NVIDIA Tesla T4 (16GB)</span>
-                                        </li>
-                                        <li className="flex items-center gap-3">
-                                            <MonitorCheck className="flex-shrink-0 h-5 w-5 text-emerald-500" />
-                                            <span className="text-sm">SO: Windows 10 Enterprise (BYOL)</span>
-                                        </li>
-                                    </ul>
-                                </CardContent>
-                            </div>
-                            <div className="md:w-1/6 p-6 flex items-center justify-center">
-                                <CardFooter className="p-0 w-full">
-                                    <Link className="w-full" href="/order">
-                                        <Button className="relative z-10 w-full h-11 bg-emerald-500 hover:bg-emerald-600">
-                                            <span>Adquirir</span>
-                                        </Button>
-                                    </Link>
-                                </CardFooter>
+            {/* Plans Section — 3 cards dinâmicos */}
+            <section className="relative w-full px-4 md:px-8 pt-8 pb-8">
+                <div className="mx-auto max-w-6xl">
+                    {/* Estados de loading / erro */}
+                    {!groups && !error && (
+                        <div className="flex items-center justify-center py-20 text-gray-500">
+                            <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                            Carregando planos...
+                        </div>
+                    )}
+                    {error && (
+                        <div className="flex items-center gap-3 mx-auto max-w-lg rounded-xl border border-red-500/30 bg-red-500/5 p-4 text-sm text-red-300">
+                            <AlertTriangle className="h-5 w-5 shrink-0 text-red-400" />
+                            <div>
+                                <p className="font-semibold">Não foi possível carregar os planos</p>
+                                <p className="text-xs text-red-400/80 mt-1">
+                                    {error} · tenta recarregar a página em instantes
+                                </p>
                             </div>
                         </div>
-                        {/* Observações - Virtuais */}
-                        <div className="px-6 pb-6">
-                            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
-                                <div className="flex items-start gap-2">
-                                    <AlertTriangle className="flex-shrink-0 h-4 w-4 text-yellow-400 mt-0.5" />
-                                    <p className="text-xs text-yellow-200">
-                                        <span className="font-semibold">Observações:</span> Não suporta os seguintes jogos e aplicações: Emuladores Android, Valorant, GTA 5 Online, Jogos com Encrypt, LoL, VirtualBox. Contém Spot.
+                    )}
+
+                    {/* Cards dos tiers */}
+                    {groups && groups.length > 0 && (
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            {groups.map((group) => (
+                                <TierCard key={group.vCpus} group={group} />
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Observações gerais */}
+                    {groups && groups.length > 0 && (
+                        <div className="mx-auto mt-8 max-w-4xl rounded-xl border border-yellow-500/30 bg-yellow-500/[0.04] p-4">
+                            <div className="flex items-start gap-3">
+                                <AlertTriangle className="h-5 w-5 shrink-0 text-yellow-400 mt-0.5" />
+                                <div className="space-y-1">
+                                    <p className="text-sm font-semibold text-yellow-200">
+                                        Jogos e aplicações não suportados
+                                    </p>
+                                    <p className="text-xs text-yellow-200/80 leading-relaxed">
+                                        Devido a anti-cheats de kernel, não rodam em nenhum
+                                        tier:{" "}
+                                        <span className="font-medium">
+                                            Valorant, GTA 5 Online, League of Legends,
+                                            Emuladores Android e VirtualBox
+                                        </span>
+                                        . Máquinas podem usar instâncias Spot — em casos
+                                        raros de preempção, o plano é estendido
+                                        automaticamente.
                                     </p>
                                 </div>
                             </div>
                         </div>
-                    </Card>
-
+                    )}
                 </div>
             </section>
 
