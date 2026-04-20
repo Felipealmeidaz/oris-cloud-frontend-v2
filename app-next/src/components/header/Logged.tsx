@@ -1,7 +1,6 @@
 'use client';
 
 import { signOut } from "@/lib/auth-client";
-import { useState, useEffect } from "react";
 
 interface User {
     id: string;
@@ -11,13 +10,15 @@ interface User {
 }
 
 import {
-    Settings,
+    LayoutDashboard,
     LogOut,
     ChevronDown,
-    User
+    User,
+    HelpCircle,
+    MessageCircle,
+    ExternalLink,
 } from "lucide-react";
 
-import { useToast } from "@/hooks/use-toast";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -31,8 +32,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 
 export default function LoggedComponent({ user }: { user: User }) {
-    const { id, name, email, image } = user || {};
-    const { toast } = useToast();
+    const { name, email, image } = user || {};
 
     return (
         <>
@@ -86,29 +86,53 @@ export default function LoggedComponent({ user }: { user: User }) {
                     <DropdownMenuSeparator className="bg-white/5 my-2" />
                     
                     <DropdownMenuGroup className="space-y-1">
-                        {/* Dashboard */}
+                        {/* Painel */}
                         <DropdownMenuItem asChild className="cursor-pointer rounded-lg focus:bg-white/10 transition-colors">
                             <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2.5">
-                                <Settings className="h-4 w-4 text-gray-400" />
+                                <LayoutDashboard className="h-4 w-4 text-gray-400" />
                                 <span className="text-sm text-gray-200">Painel de Controle</span>
                             </Link>
                         </DropdownMenuItem>
 
-                        {/* Logout */}
-                        <DropdownMenuItem 
-                            className="cursor-pointer rounded-lg focus:bg-red-500/10 transition-colors px-3 py-2.5"
-                            onClick={async () => {
-                                localStorage.removeItem('session');
-                                await signOut();
-                                window.location.href = '/';
-                            }}
-                        >
-                            <div className="flex items-center gap-3">
-                                <LogOut className="h-4 w-4 text-red-400" />
-                                <span className="text-sm text-red-400">Fazer Logout</span>
-                            </div>
+                        {/* FAQ */}
+                        <DropdownMenuItem asChild className="cursor-pointer rounded-lg focus:bg-white/10 transition-colors">
+                            <Link href="/faq" className="flex items-center gap-3 px-3 py-2.5">
+                                <HelpCircle className="h-4 w-4 text-gray-400" />
+                                <span className="text-sm text-gray-200">Perguntas frequentes</span>
+                            </Link>
+                        </DropdownMenuItem>
+
+                        {/* Suporte no Discord */}
+                        <DropdownMenuItem asChild className="cursor-pointer rounded-lg focus:bg-white/10 transition-colors">
+                            <Link
+                                href="/discord"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-3 px-3 py-2.5"
+                            >
+                                <MessageCircle className="h-4 w-4 text-gray-400" />
+                                <span className="text-sm text-gray-200 flex-1">Suporte no Discord</span>
+                                <ExternalLink className="h-3.5 w-3.5 text-gray-500" />
+                            </Link>
                         </DropdownMenuItem>
                     </DropdownMenuGroup>
+
+                    <DropdownMenuSeparator className="bg-white/5 my-2" />
+
+                    {/* Logout */}
+                    <DropdownMenuItem
+                        className="cursor-pointer rounded-lg focus:bg-red-500/10 transition-colors px-3 py-2.5"
+                        onClick={async () => {
+                            localStorage.removeItem('session');
+                            await signOut();
+                            window.location.href = '/';
+                        }}
+                    >
+                        <div className="flex items-center gap-3">
+                            <LogOut className="h-4 w-4 text-red-400" />
+                            <span className="text-sm text-red-400">Fazer Logout</span>
+                        </div>
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         </>

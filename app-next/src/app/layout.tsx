@@ -45,6 +45,9 @@ export default function RootLayout({
     '/reset-password': {
       title: 'Redefinir senha - Oris Cloud'
     },
+    '/faq': {
+      title: 'Perguntas frequentes - Oris Cloud'
+    },
   };
   const currentMetadata = routeMetadata[pathname as keyof typeof routeMetadata] || metadata;
 

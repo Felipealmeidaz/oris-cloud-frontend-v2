@@ -92,6 +92,15 @@ export default function Header() {
                                 </NavigationMenuLink>
                             </NavigationMenuItem>
 
+                            {/* FAQ */}
+                            <NavigationMenuItem>
+                                <NavigationMenuLink asChild>
+                                    <Link href="/faq" className={`${navigationMenuTriggerStyle()} bg-transparent`}>
+                                        FAQ
+                                    </Link>
+                                </NavigationMenuLink>
+                            </NavigationMenuItem>
+
                             {/* Downloads */}
                             <NavigationMenuItem>
                                 <NavigationMenuTrigger className="text-white bg-transparent hover:bg-zinc-800 focus:bg-zinc-800">
@@ -201,6 +210,13 @@ export default function Header() {
                         onClick={() => setMobileMenuOpen(false)}
                     >
                         Máquinas Virtuais
+                    </Link>
+                    <Link
+                        href="/faq"
+                        className="text-neutral-600 dark:text-neutral-300 hover:text-neutral-800 dark:hover:text-neutral-100"
+                        onClick={() => setMobileMenuOpen(false)}
+                    >
+                        Perguntas frequentes
                     </Link>
                     <Link
                         href="/discord"

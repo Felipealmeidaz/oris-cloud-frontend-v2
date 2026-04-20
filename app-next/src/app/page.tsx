@@ -92,39 +92,61 @@ export default function Home() {
         </div>
       </section>
 
-{/* World Map Section */}
+{/* World Map Section — jogadores BR convergindo pra AWS SP (sa-east-1) */}
       <section className="relative px-6 pt-28">
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <div className="mb-3 flex items-center justify-center gap-2 text-sm text-gray-400">
               <MonitorCheck className="h-4 w-4" />
-              Oris | Global
+              Oris · Cobertura nacional
             </div>
             <h2 className="mb-4 text-4xl font-normal tracking-wide text-white sm:text-5xl">
-              Conectando Gamers<br />ao Redor do Mundo
+              Baixa latência de <br className="hidden md:block" />
+              Norte a Sul do Brasil
             </h2>
             <p className="mx-auto mb-8 max-w-2xl text-lg text-gray-400">
-              Nossa infraestrutura global permite que jogadores de qualquer lugar tenham acesso a máquinas de alta performance.
+              Nosso datacenter em São Paulo (AWS{" "}
+              <span className="font-mono text-white/70">sa-east-1</span>) atende
+              jogadores de todo o Brasil com latência ideal pra Parsec e
+              Moonlight.
             </p>
           </div>
-          
+
           <Suspense fallback={<div className="h-96" />}>
             <WorldMap
+              // Todas as rotas terminam em São Paulo (AWS sa-east-1) — nosso único POP.
+              // Origens: principais capitais BR de onde vêm os gamers.
               dots={[
                 {
-                  start: { lat: -23.5505, lng: -46.6333 }, // São Paulo
-                  end: { lat: 37.7749, lng: -122.4194 }, // San Francisco
+                  start: { lat: -3.1190, lng: -60.0217 }, // Manaus
+                  end: { lat: -23.5505, lng: -46.6333 }, // São Paulo
                 },
                 {
-                  start: { lat: -23.5505, lng: -46.6333 }, // São Paulo
-                  end: { lat: 51.5074, lng: -0.1278 }, // Londres
+                  start: { lat: -3.7319, lng: -38.5267 }, // Fortaleza
+                  end: { lat: -23.5505, lng: -46.6333 },
                 },
                 {
-                  start: { lat: -23.5505, lng: -46.6333 }, // São Paulo
-                  end: { lat: 35.6762, lng: 139.6503 }, // Tóquio
+                  start: { lat: -8.0476, lng: -34.8770 }, // Recife
+                  end: { lat: -23.5505, lng: -46.6333 },
+                },
+                {
+                  start: { lat: -15.8267, lng: -47.9218 }, // Brasília
+                  end: { lat: -23.5505, lng: -46.6333 },
+                },
+                {
+                  start: { lat: -22.9068, lng: -43.1729 }, // Rio de Janeiro
+                  end: { lat: -23.5505, lng: -46.6333 },
+                },
+                {
+                  start: { lat: -25.4284, lng: -49.2733 }, // Curitiba
+                  end: { lat: -23.5505, lng: -46.6333 },
+                },
+                {
+                  start: { lat: -30.0346, lng: -51.2177 }, // Porto Alegre
+                  end: { lat: -23.5505, lng: -46.6333 },
                 },
               ]}
-              lineColor="#ffffffff"
+              lineColor="#22c55e"
             />
           </Suspense>
         </div>
@@ -199,6 +221,17 @@ export default function Home() {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
+
+            {/* Link pra página dedicada de FAQ */}
+            <div className="pt-4">
+              <Link
+                href="/faq"
+                className="inline-flex items-center gap-2 text-sm font-medium text-emerald-400 hover:text-emerald-300 transition"
+              >
+                Ver todas as perguntas frequentes
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
           </div>
 
         </div>
